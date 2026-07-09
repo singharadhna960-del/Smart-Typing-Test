@@ -1,0 +1,1200 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+ 
+<head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-49843W5SML"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-49843W5SML');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Typing Test — Typing Test Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Rajdhani:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="{% static 'images/logo.png' %}">
+<style>
+  img{height:60px;top:0%;}
+  .hero-image img{height:350px;border:solid 0px #fff;border-radius:100%;box-shadow:0 0 100px rgb(160,199,196);}
+  .logout-btn{position:fixed;bottom:20px;right:50px;background:red;color:white;padding:12px;border-radius:50px;border:none;cursor:pointer;z-index:9999;}
+  [data-theme="light"]{--bg:#f4f6ff;--surf:#ffffff;--surf2:#eef0fb;--surf3:#e4e6f5;--brd:#d0d4f0;--brd2:#b8bce0;--txt:#0f1235;--dim:#4a4e8a;--muted:#8890c0;--shad:rgba(0,0,60,.09);--dot:rgba(0,0,80,.03);--topbg:rgba(255,255,255,.95);}
+  [data-theme="dark"]{--bg:#05050e;--surf:#0b0b1c;--surf2:#101028;--surf3:#171732;--brd:#1a1a38;--brd2:#252550;--txt:#e2e2f5;--dim:#8080b0;--muted:#40405a;--shad:rgba(0,0,0,.65);--dot:rgba(255,255,255,.028);--topbg:rgba(11,11,28,.94);}
+  :root{--a:#00c9a7;--a2:#6d28d9;--ag:rgba(0,201,167,.14);--ok:#15803d;--okb:rgba(21,128,61,.12);--err:#dc2626;--errb:rgba(220,38,38,.1);--warn:#b45309;}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--txt);font-family:'Poppins',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s;}
+  body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(circle,var(--dot) 1px,transparent 1px);background-size:28px 28px;}
+  .hidden{display:none!important;}
+  .gtext{background:linear-gradient(135deg,var(--a),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  @keyframes fade-up{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+
+  /* TOPBAR */
+  #topbar{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;background:var(--topbg);border-bottom:1px solid var(--brd2);backdrop-filter:blur(16px);transition:background .3s,border-color .3s;}
+  .tb-left{display:flex;align-items:center;gap:11px;cursor:pointer;}
+  .tb-logo-wrap{width:40px;height:40px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid var(--a);box-shadow:0 0 10px rgba(0,201,167,.3);}
+  .tb-name{line-height:1.3;}
+  .tb-name strong{display:block;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;letter-spacing:.5px;color:var(--a);}
+  .tb-name small{display:block;font-size:9.5px;font-weight:400;font-family:'Poppins',sans-serif;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;}
+  .tb-right{display:flex;align-items:center;gap:9px;}
+  .sponsor-tag{display:flex;align-items:center;gap:5px;background:var(--surf2);border:1px solid var(--brd2);border-radius:999px;padding:4px 13px;font-size:11px;color:var(--dim);}
+  .sponsor-tag b{color:var(--a);}
+  .th-btn{display:flex;align-items:center;gap:7px;background:var(--surf2);border:1.5px solid var(--brd2);border-radius:999px;padding:5px 13px 5px 9px;cursor:pointer;font-size:12px;font-weight:700;color:var(--dim);transition:all .25s;font-family:'Rajdhani',sans-serif;}
+  .th-btn:hover{border-color:var(--a);color:var(--a);}
+  .pill{width:34px;height:17px;border-radius:999px;background:var(--brd2);position:relative;transition:background .3s;flex-shrink:0;}
+  .pill.on{background:var(--a);}
+  .pill::after{content:'';position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:#fff;transition:transform .3s;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+  .pill.on::after{transform:translateX(17px);}
+
+  /* FLOATING KEYS */
+  .floaters{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+  .fkey{position:absolute;bottom:-50px;border:1px solid var(--brd2);border-radius:8px;padding:5px 12px;font-family:'Rajdhani',monospace;font-size:13px;font-weight:700;color:var(--muted);background:var(--surf);opacity:0;animation:float-up-key linear infinite;box-shadow:0 2px 8px var(--shad);}
+  [data-theme="dark"] .fkey{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1);}
+  @keyframes float-up-key{0%{opacity:0;transform:translateY(0) rotate(var(--rr));}8%{opacity:.55;}90%{opacity:.25;}100%{opacity:0;transform:translateY(-105vh) rotate(var(--rr));}}
+
+  /* LANDING */
+  #landing{display:flex;flex-direction:column;align-items:center;min-height:100vh;position:relative;z-index:1;padding-top:56px;}
+  .hero{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:48px 20px 36px;position:relative;min-height:80vh;width:100%;}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 55% at 50% 40%,rgba(0,201,167,.07) 0%,transparent 68%);pointer-events:none;}
+  .hero-logo-wrap{position:relative;width:190px;height:224px;margin:0 auto 26px;animation:hero-float 4s ease-in-out infinite alternate;}
+  @keyframes hero-float{from{transform:translateY(0);}to{transform:translateY(-12px);}}
+  .logo-glow-ring{position:absolute;inset:-28px;border-radius:50%;background:radial-gradient(circle,rgba(0,201,167,.28) 0%,rgba(109,40,217,.12) 50%,transparent 72%);animation:glow-pulse 3s ease-in-out infinite alternate;pointer-events:none;}
+  @keyframes glow-pulse{from{opacity:.55;transform:scale(.88);}to{opacity:1;transform:scale(1.12);}}
+  .logo-glow-ring2{position:absolute;inset:-14px;border-radius:50%;background:radial-gradient(circle,rgba(0,201,167,.15) 0%,transparent 65%);animation:glow-pulse2 2.5s ease-in-out 0.5s infinite alternate;pointer-events:none;}
+  @keyframes glow-pulse2{from{opacity:.4;transform:scale(.92);}to{opacity:.85;transform:scale(1.06);}}
+  .hero-title{font-family:'Orbitron',sans-serif;font-size:clamp(18px,4vw,42px);font-weight:900;line-height:1.1;margin-bottom:8px;letter-spacing:-1px;animation:fade-up .7s .05s ease both;}
+  .hero-guide{font-size:clamp(13px,2vw,17px);color:var(--dim);margin-bottom:6px;animation:fade-up .7s .14s ease both;}
+  .hero-guide .hl{color:var(--a);font-weight:700;font-family:'Rajdhani',sans-serif;font-size:1.18em;letter-spacing:.5px;}
+  .hero-sub{font-size:clamp(13px,1.6vw,15px);color:var(--muted);max-width:540px;line-height:1.7;margin-bottom:30px;animation:fade-up .7s .22s ease both;}
+  .hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:fade-up .7s .3s ease both;}
+  .btn-prime{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--a),var(--a2));color:#fff;border:none;border-radius:12px;padding:14px 38px;font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .3s;box-shadow:0 6px 28px rgba(0,201,167,.28);letter-spacing:.5px;}
+  .btn-prime:hover{transform:translateY(-3px);box-shadow:0 12px 44px rgba(0,201,167,.42);}
+  .btn-sec{display:flex;align-items:center;gap:7px;background:transparent;border:2px solid var(--brd2);color:var(--dim);border-radius:12px;padding:13px 26px;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .25s;}
+  .btn-sec:hover{border-color:var(--a);color:var(--a);}
+  .hero-credit{margin-top:20px;font-size:11.5px;color:var(--muted);animation:fade-up .7s .42s ease both;font-family:'Poppins',sans-serif;}
+  .hero-credit b{color:var(--a);}
+
+  /* WHY SECTION */
+  .section{width:100%;max-width:1100px;padding:52px 24px 28px;margin:0 auto;}
+  .sec-head{text-align:center;margin-bottom:40px;}
+  .sec-head h2{font-family:'Orbitron',sans-serif;font-size:clamp(20px,3.5vw,34px);font-weight:800;margin-bottom:10px;}
+  .sec-head p{font-size:14px;color:var(--dim);max-width:520px;margin:0 auto;line-height:1.7;}
+  .why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;}
+  .why-card{background:var(--surf);border:1px solid var(--brd2);border-radius:16px;padding:22px 20px;transition:all .32s cubic-bezier(.25,.8,.25,1);opacity:0;transform:translateY(28px);position:relative;overflow:hidden;}
+  .why-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 20%,rgba(0,201,167,.05),transparent 60%);opacity:0;transition:opacity .3s;}
+  .why-card.visible{opacity:1;transform:translateY(0);}
+  .why-card:hover{border-color:var(--a);transform:translateY(-4px);box-shadow:0 12px 36px rgba(0,201,167,.12);}
+  .why-card:hover::after{opacity:1;}
+  .why-icon-wrap{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:13px;transition:transform .3s;}
+  .why-card:hover .why-icon-wrap{transform:scale(1.1) rotate(-5deg);}
+  .why-icon-wrap.c1{background:linear-gradient(135deg,#7c3aed,#a855f7);}
+  .why-icon-wrap.c2{background:linear-gradient(135deg,#ea580c,#f97316);}
+  .why-icon-wrap.c3{background:linear-gradient(135deg,#0d9488,#14b8a6);}
+  .why-icon-wrap.c4{background:linear-gradient(135deg,#1d4ed8,#3b82f6);}
+  .why-icon-wrap.c5{background:linear-gradient(135deg,#b45309,#f59e0b);}
+  .why-icon-wrap.c6{background:linear-gradient(135deg,#b91c1c,#ef4444);}
+  .why-icon-wrap.c7{background:linear-gradient(135deg,#15803d,#22c55e);}
+  .why-icon-wrap.c8{background:linear-gradient(135deg,#9d174d,#ec4899);}
+  .why-card h3{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;margin-bottom:6px;}
+  .why-card p{font-size:12.5px;color:var(--dim);line-height:1.75;}
+
+  /* FEATURE LIST */
+  .flist-section{width:100%;max-width:1100px;padding:14px 24px 44px;margin:0 auto;}
+  .flist-sec-head{text-align:center;margin-bottom:24px;}
+  .flist-sec-head h2{font-family:'Orbitron',sans-serif;font-size:clamp(17px,2.8vw,28px);font-weight:800;}
+  .flist-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;}
+  .fli{background:var(--surf);border:1px solid var(--brd);border-radius:13px;padding:14px 18px;display:flex;align-items:center;gap:13px;transition:all .25s;opacity:0;transform:translateX(-16px);}
+  .fli.visible{opacity:1;transform:translateX(0);}
+  .fli:hover{border-color:var(--a);background:rgba(0,201,167,.04);transform:translateX(4px);}
+  .fli-icon{font-size:22px;flex-shrink:0;}
+  .fli-title{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:500;color:var(--txt);}
+
+  /* FOOTER */
+  .site-footer{width:100%;background:var(--surf);border-top:1px solid var(--brd2);padding:44px 24px 22px;margin-top:20px;}
+  .footer-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1.1fr;gap:44px;align-items:start;}
+  .footer-left{display:flex;flex-direction:column;gap:14px;}
+  .footer-logo-row{display:flex;align-items:center;gap:14px;}
+  .footer-logo-svg{width:90px;height:106px;flex-shrink:0;filter:drop-shadow(0 0 14px rgba(0,201,167,.28));}
+  .footer-college-name{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;line-height:1.5;color:var(--a);}
+  .footer-address{font-size:13px;color:var(--dim);line-height:2;}
+  .footer-address b{color:var(--txt);}
+  .follow-label{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--txt);}
+  .social-row{display:flex;gap:9px;flex-wrap:wrap;}
+  .sicon{width:40px;height:40px;border-radius:10px;background:var(--surf2);border:1px solid var(--brd2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .22s;text-decoration:none;color:var(--dim);}
+  .sicon:hover{border-color:var(--a);color:var(--a);transform:translateY(-3px);box-shadow:0 6px 16px rgba(0,201,167,.18);}
+  .sicon svg{width:20px;height:20px;fill:currentColor;}
+  .footer-right{display:flex;flex-direction:column;gap:13px;}
+  .ft-contact-title{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--txt);margin-bottom:2px;}
+  .ft-ci{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--dim);}
+  .ft-ci svg{width:17px;height:17px;fill:var(--a);flex-shrink:0;}
+  .ft-dev{margin-top:8px;display:inline-block;background:linear-gradient(135deg,rgba(0,201,167,.12),rgba(109,40,217,.08));border:1px solid rgba(0,201,167,.3);border-radius:10px;padding:10px 16px;font-size:13px;}
+  .ft-dev b{color:var(--a);font-family:'Rajdhani',sans-serif;font-size:15px;}
+  .footer-copy{max-width:900px;margin:24px auto 0;padding-top:18px;border-top:1px solid var(--brd);text-align:center;font-size:12px;color:var(--muted);}
+  .footer-copy b{color:var(--a);}
+  @media(max-width:640px){.footer-inner{grid-template-columns:1fr;gap:24px;}}
+
+  /* SETUP */
+  #setup{display:none;flex-direction:column;align-items:center;padding:80px 20px 60px;min-height:100vh;position:relative;z-index:1;}
+  .stepper{display:flex;align-items:center;margin-bottom:28px;}
+  .sdot{display:flex;flex-direction:column;align-items:center;gap:5px;}
+  .sc{width:36px;height:36px;border-radius:50%;border:2px solid var(--brd2);background:var(--surf2);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;color:var(--muted);transition:all .3s;z-index:2;position:relative;}
+  .sdot.active .sc{border-color:var(--a);color:var(--a);box-shadow:0 0 0 5px var(--ag);}
+  .sdot.done .sc{background:var(--a);border-color:var(--a);color:#000;}
+  .slbl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);white-space:nowrap;font-family:'Rajdhani',sans-serif;transition:color .3s;}
+  .sdot.active .slbl{color:var(--a);}.sdot.done .slbl{color:var(--dim);}
+  .sline{width:38px;height:2px;background:var(--brd2);margin:0 2px;margin-bottom:20px;transition:background .4s;flex-shrink:0;}
+  .sline.done{background:var(--a);}
+  .svp{width:100%;max-width:740px;}
+  .slide{display:none;flex-direction:column;animation:fade-up .38s ease both;}
+  .slide.active{display:flex;}
+  .scard{border-radius:22px;padding:40px 42px;position:relative;overflow:hidden;box-shadow:0 14px 60px var(--shad);transition:all .3s;}
+  .scard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--a),var(--a2));}
+  .s1-bg{background:linear-gradient(145deg,#060c28 0%,#0a1240 50%,#060c28 100%);border:1px solid rgba(80,110,255,.3);}
+  .s2-bg{background:linear-gradient(145deg,#100220 0%,#1c0440 50%,#100220 100%);border:1px solid rgba(140,50,255,.3);}
+  .s3-bg{background:linear-gradient(145deg,#020e0a 0%,#042a18 50%,#020e0a 100%);border:1px solid rgba(0,180,80,.25);}
+  .s4-bg{background:linear-gradient(145deg,#140900 0%,#2c1500 50%,#140900 100%);border:1px solid rgba(240,130,0,.25);}
+  .s5-bg{background:linear-gradient(145deg,#020e20 0%,#061c3c 50%,#020e20 100%);border:1px solid rgba(40,140,255,.28);}
+  [data-theme="light"] .s1-bg,[data-theme="light"] .s2-bg,[data-theme="light"] .s3-bg,[data-theme="light"] .s4-bg,[data-theme="light"] .s5-bg{background:var(--surf);border-color:var(--brd2);}
+  .se{font-size:30px;display:block;margin-bottom:10px;}
+  .st{font-family:'Orbitron',sans-serif;font-size:clamp(15px,2.5vw,21px);font-weight:800;margin-bottom:5px;letter-spacing:.5px;}
+  .ss{font-size:13px;color:var(--dim);margin-bottom:22px;line-height:1.6;}
+  .back-row{display:flex;align-items:center;margin-top:18px;}
+  .nbk{display:flex;align-items:center;gap:5px;background:var(--surf2);border:1.5px solid var(--brd2);border-radius:9px;padding:7px 18px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--dim);cursor:pointer;transition:all .2s;}
+  .nbk:hover{border-color:var(--a);color:var(--a);}
+  .sloc{font-size:11px;color:var(--muted);margin-left:auto;font-family:'Rajdhani',sans-serif;}
+
+  /* S1 Language */
+  .lang2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .lcard{background:var(--surf2);border:2px solid var(--brd2);border-radius:18px;padding:28px 16px;cursor:pointer;text-align:center;position:relative;overflow:hidden;transition:all .28s cubic-bezier(.25,.8,.25,1);}
+  .lcard:hover{border-color:var(--a);transform:scale(1.04) translateY(-3px);box-shadow:0 10px 30px rgba(0,201,167,.2);}
+  .lcard.sel{border-color:var(--a);background:var(--ag);box-shadow:0 0 28px rgba(0,201,167,.2);}
+  .lc-check{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:var(--a);color:#000;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.2);transition:all .25s;}
+  .lcard.sel .lc-check{opacity:1;transform:scale(1);}
+  .lc-icon{font-size:36px;display:block;margin-bottom:11px;}
+  .lc-name{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;margin-bottom:5px;}
+  .lc-sub{font-size:11px;color:var(--dim);}
+  .lc-badge{display:inline-block;margin-top:10px;border:1px solid var(--brd2);border-radius:999px;padding:3px 12px;font-family:'Rajdhani',sans-serif;font-size:12px;color:var(--dim);font-weight:700;}
+  .lcard.sel .lc-badge{border-color:var(--a);color:var(--a);}
+
+  /* S2 Timer */
+  .tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;}
+  .topt{background:var(--surf2);border:2px solid var(--brd2);border-radius:14px;padding:18px 8px;cursor:pointer;text-align:center;transition:all .28s cubic-bezier(.25,.8,.25,1);}
+  .topt:hover{border-color:var(--a);transform:scale(1.05) translateY(-3px);box-shadow:0 8px 24px rgba(0,201,167,.15);}
+  .topt.sel{border-color:var(--a);background:var(--ag);}
+  .tn{font-family:'Orbitron',sans-serif;font-size:26px;font-weight:800;color:var(--txt);}
+  .topt.sel .tn{color:var(--a);}
+  .tl{font-family:'Rajdhani',sans-serif;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:3px;}
+  .cbox{background:var(--surf2);border:2px solid var(--brd2);border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:10px;transition:border-color .22s;}
+  .cbox:focus-within{border-color:var(--a);}
+  .cinp{flex:1;background:transparent;border:none;outline:none;font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;color:var(--txt);}
+  .cinp::placeholder{color:var(--muted);font-size:13px;}
+  .cset{background:var(--a);color:#000;border:none;border-radius:8px;padding:7px 14px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:800;cursor:pointer;}
+
+  /* S3 Passage */
+  .plist{display:flex;flex-direction:column;gap:10px;max-height:360px;overflow-y:auto;padding-right:4px;}
+  .plist::-webkit-scrollbar{width:3px;}
+  .plist::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:3px;}
+  .pcard{background:var(--surf2);border:2px solid var(--brd2);border-radius:14px;padding:14px 16px;cursor:pointer;display:flex;align-items:flex-start;gap:12px;transition:all .28s cubic-bezier(.25,.8,.25,1);}
+  .pcard:hover{border-color:var(--a);transform:translateX(6px);}
+  .pcard.sel{border-color:var(--a);background:var(--ag);}
+  .pcard-icon{width:34px;height:34px;border-radius:8px;background:var(--surf3);border:1px solid var(--brd2);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;margin-top:2px;}
+  .pcard.sel .pcard-icon{background:rgba(0,201,167,.15);border-color:var(--a);}
+  .pbody{flex:1;min-width:0;}
+  .ptitle{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;margin-bottom:4px;}
+  .pprev{font-size:12px;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .pprev.hin{font-family:'Noto Sans Devanagari',sans-serif;}
+  .pmeta{display:flex;align-items:center;gap:8px;margin-top:7px;font-family:'Rajdhani',sans-serif;font-size:12px;color:var(--muted);}
+  .diff{border-radius:999px;padding:2px 10px;font-size:11px;font-weight:700;border:1px solid;}
+  .diff.easy{color:#16a34a;border-color:#16a34a;background:rgba(22,163,74,.1);}
+  .diff.medium{color:#d97706;border-color:#d97706;background:rgba(217,119,6,.1);}
+  .diff.hard{color:#dc2626;border-color:#dc2626;background:rgba(220,38,38,.1);}
+
+  /* S4 Font size */
+  .fsgrid{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:16px;}
+  .fsb{background:var(--surf2);border:2px solid var(--brd2);border-radius:9px;padding:8px 20px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--dim);transition:all .22s;}
+  .fsb:hover{border-color:var(--a);transform:scale(1.05);}
+  .fsb.sel{border-color:var(--a);background:var(--ag);color:var(--a);}
+  .fprev{background:var(--surf2);border:1px solid var(--brd2);border-radius:13px;padding:16px 20px;color:var(--dim);line-height:2;font-family:'Poppins',sans-serif;transition:font-size .25s;}
+  .fprev.hin{font-family:'Noto Sans Devanagari',sans-serif;line-height:2.8;}
+
+  /* S5 Start */
+  .sumg{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:18px;}
+  .sumi{background:var(--surf2);border:1px solid var(--brd2);border-radius:12px;padding:13px 16px;}
+  .suml{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-family:'Rajdhani',sans-serif;margin-bottom:5px;}
+  .sumv{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;}
+  .instruc{background:var(--surf2);border:1px solid var(--brd2);border-radius:13px;padding:15px 18px;font-size:12.5px;color:var(--dim);line-height:2.2;margin-bottom:18px;}
+  .instruc b{color:var(--a);}
+  .ic{color:var(--ok);}.ie{color:var(--err);}
+  .toggle-options{display:flex;flex-direction:column;gap:9px;margin-bottom:18px;}
+  .tog-row{display:flex;align-items:center;justify-content:space-between;background:var(--surf2);border:1px solid var(--brd2);border-radius:10px;padding:11px 15px;}
+  .tog-label{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;color:var(--txt);}
+  .tog-label small{display:block;font-size:11px;color:var(--muted);font-family:'Poppins',sans-serif;font-weight:400;}
+  .tog-sw{width:42px;height:22px;border-radius:999px;background:var(--brd2);position:relative;cursor:pointer;transition:background .3s;flex-shrink:0;}
+  .tog-sw.on{background:var(--a);}
+  .tog-sw::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .3s;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+  .tog-sw.on::after{transform:translateX(20px);}
+  .startbtn{width:100%;padding:17px;border-radius:14px;background:linear-gradient(135deg,var(--a),var(--a2));border:none;color:#fff;font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:.8px;transition:all .3s;box-shadow:0 6px 28px rgba(0,201,167,.25);}
+  .startbtn:hover{transform:translateY(-3px);box-shadow:0 12px 42px rgba(0,201,167,.4);}
+  .shint{text-align:center;margin-top:9px;font-size:11px;color:var(--muted);}
+  .page-footer{margin-top:36px;font-size:12px;color:var(--muted);text-align:center;font-family:'Poppins',sans-serif;}
+  .page-footer b{color:var(--a);}
+
+  /* TEST SCREEN */
+  #test{display:none;flex-direction:column;height:100vh;overflow:hidden;}
+  .thdr{display:flex;align-items:center;justify-content:space-between;padding:0 26px;height:52px;background:var(--surf);border-bottom:1px solid var(--brd2);flex-shrink:0;transition:background .3s;}
+  .tlogo{font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;color:var(--dim);}
+  .ttime{font-family:'Poppins',sans-serif;font-size:28px;font-weight:700;color:var(--a);letter-spacing:-1px;min-width:88px;text-align:center;transition:color .3s;}
+  .ttime.warn{color:var(--warn);}
+  .ttime.danger{color:var(--err);animation:tblink 1s step-end infinite;}
+  @keyframes tblink{0%,100%{opacity:1;}50%{opacity:.2;}}
+  .lstats{display:flex;gap:20px;}
+  .ls{text-align:center;}
+  .lsl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);display:block;font-family:'Poppins',sans-serif;}
+  .lsv{font-family:'Poppins',sans-serif;font-size:16px;font-weight:700;}
+  .quit-btn{display:flex;align-items:center;gap:5px;background:transparent;border:1.5px solid var(--err);color:var(--err);border-radius:8px;padding:5px 12px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .22s;}
+  .quit-btn:hover{background:var(--errb);}
+  .pause-btn{display:flex;align-items:center;gap:5px;background:transparent;border:1.5px solid var(--warn);color:var(--warn);border-radius:8px;padding:5px 12px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .22s;}
+  .pause-btn:hover{background:rgba(180,83,9,.1);}
+  .submit-btn{display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,var(--a),var(--a2));border:none;color:#fff;border-radius:8px;padding:6px 14px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .22s;}
+  .submit-btn:hover{opacity:.88;}
+  .tbody{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+  .ppane{flex:1;overflow-y:auto;padding:22px 56px;background:var(--surf);position:relative;}
+  .ppane::-webkit-scrollbar{width:4px;}
+  .ppane::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:4px;}
+  .pcontent{font-family:'Poppins',sans-serif;font-size:18px;line-height:2;}
+  .pcontent.hin{font-family:'Noto Sans Devanagari',sans-serif;line-height:2;}
+  .w{display:inline;}
+  .w.pending{color:var(--dim);}
+  .w.cur{background:rgba(0,201,167,.13);outline:2px solid var(--a);outline-offset:2px;border-radius:4px;padding:0 1px;}
+  .w.ok{color:var(--ok);}
+  .w.err{text-decoration:underline wavy var(--err);text-underline-offset:3px;}
+  .progf{height:100%;background:linear-gradient(90deg,var(--a),var(--a2));width:0%;transition:width .4s;}
+  .typane{flex:1;display:flex;flex-direction:column;padding:18px 56px;background:var(--bg);position:relative;cursor:text;transition:background .3s;overflow:hidden;border-top:2px solid var(--brd2);}
+  .tylbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:7px;font-family:'Rajdhani',sans-serif;}
+  .tylbl::before{content:'';display:block;width:6px;height:6px;border-radius:50%;background:var(--a);box-shadow:0 0 7px var(--a);animation:ldot 1.5s ease-in-out infinite;}
+  @keyframes ldot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.3;transform:scale(.6);}}
+  .ty-para{flex:1;font-family:'Poppins',sans-serif;font-size:18px;line-height:2.6;word-wrap:break-word;overflow-y:auto;}
+  .ty-para.hin{font-family:'Noto Sans Devanagari',sans-serif;line-height:3.2;}
+  .ty-para::-webkit-scrollbar{width:3px;}
+  .ty-para::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:3px;}
+  .ty-word.ok{color:var(--ok);}
+  .ty-word.err{color:var(--err);border-bottom:2px solid var(--err);}
+  .ty-current{border-bottom:2px solid var(--a);}
+  .ty-cursor{display:inline-block;width:2px;height:1em;background:var(--a);vertical-align:text-bottom;margin-left:1px;animation:blink 1s step-end infinite;}
+  .rinp{position:absolute;opacity:0;top:0;left:0;width:1px;height:1px;pointer-events:none;}
+  .tyftr{display:flex;align-items:center;gap:6px;margin-top:7px;font-size:11px;color:var(--muted);font-family:'Poppins',sans-serif;}
+  .kb{background:var(--surf2);border:1px solid var(--brd2);border-radius:4px;padding:1px 8px;font-size:10px;font-family:'Rajdhani',sans-serif;}
+
+  /* RESULT DASHBOARD */
+  #result{display:none;flex-direction:column;align-items:center;padding:78px 16px 60px;min-height:100vh;z-index:1;position:relative;}
+  .dash-wrap{width:100%;max-width:1040px;}
+  .dash-header{background:var(--surf);border:1px solid var(--brd2);border-radius:18px 18px 0 0;padding:22px 28px;border-bottom:1px solid var(--brd2);position:relative;overflow:hidden;animation:fade-up .4s ease both;}
+  .dash-header::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--a),var(--a2));}
+  .dash-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+  .dash-title{font-family:'Orbitron',sans-serif;font-size:clamp(18px,3vw,24px);font-weight:900;letter-spacing:.5px;}
+  .speed-tog-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--dim);font-family:'Poppins',sans-serif;}
+  .dash-info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;font-size:13px;}
+  .dash-info-item{color:var(--dim);font-family:'Poppins',sans-serif;}
+  .dash-info-item b{color:var(--txt);}
+  .dash-stats{background:var(--surf);border:1px solid var(--brd2);border-top:none;padding:22px 28px;animation:fade-up .4s .1s ease both;}
+  .sg4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;}
+  @media(max-width:700px){.sg4{grid-template-columns:repeat(2,1fr);}}
+  .stile{background:var(--surf2);border:1px solid var(--brd2);border-radius:13px;padding:16px;position:relative;transition:all .25s;}
+  .stile:hover{border-color:var(--a);transform:translateY(-2px);}
+  .stile-lbl{font-size:11px;color:var(--dim);font-family:'Poppins',sans-serif;margin-bottom:8px;}
+  .stile-val{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:800;line-height:1;}
+  .stile-ico{position:absolute;top:12px;right:12px;font-size:18px;opacity:.35;}
+  .stile.t-acc .stile-val{color:var(--a);}
+  .stile.t-ok .stile-val{color:var(--ok);}
+  .stile.t-err .stile-val{color:var(--err);}
+  .stile.t-warn .stile-val{color:var(--warn);}
+  .stile.net-hi{border:2px solid var(--a);background:linear-gradient(135deg,rgba(0,201,167,.15),rgba(109,40,217,.1));box-shadow:0 0 28px rgba(0,201,167,.2),inset 0 1px 0 rgba(255,255,255,.1);}
+  .stile.net-hi .stile-lbl{color:var(--a);font-weight:700;font-size:12px;}
+  .stile.net-hi .stile-val{font-size:38px;color:var(--a);}
+  .stile.net-hi .stile-ico{opacity:.7;font-size:22px;}
+  .qual-info{background:rgba(0,201,167,.07);border:1px solid rgba(0,201,167,.22);border-radius:10px;padding:11px 15px;font-size:12px;color:var(--dim);display:flex;align-items:flex-start;gap:8px;margin-top:5px;margin-bottom:16px;font-family:'Poppins',sans-serif;}
+  .dash-actions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;}
+  .abtn{padding:11px 24px;border-radius:11px;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.3px;}
+  .abtn.p{background:linear-gradient(135deg,var(--a),var(--a2));color:#fff;border:none;}
+  .abtn.s{background:transparent;color:var(--txt);border:2px solid var(--brd2);}
+  .abtn:hover{transform:translateY(-2px);}
+  .comp-toggle-row{display:flex;align-items:center;gap:10px;padding:13px 28px;background:var(--surf);border:1px solid var(--brd2);border-top:none;animation:fade-up .4s .2s ease both;}
+  .comp-toggle-lbl{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;}
+  .comp-wrap{background:var(--surf);border:1px solid var(--brd2);border-top:none;border-radius:0 0 18px 18px;padding:18px 28px;animation:fade-up .4s .25s ease both;}
+  .comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:680px){.comp-grid{grid-template-columns:1fr;}}
+  .comp-pane-title{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;color:var(--dim);}
+  .comp-pane{border-radius:12px;padding:16px;overflow-y:auto;max-height:380px;font-size:14px;line-height:2.4;}
+  .comp-pane::-webkit-scrollbar{width:3px;}
+  .comp-pane::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:3px;}
+  .comp-orig{background:rgba(220,38,38,.05);border:1px solid rgba(220,38,38,.18);}
+  .comp-typed{background:rgba(21,128,61,.05);border:1px solid rgba(21,128,61,.18);}
+  .cw-ok{color:var(--ok);}
+  .cw-err{background:rgba(220,38,38,.18);color:var(--err);border-radius:3px;padding:0 2px;border-bottom:2px solid var(--err);}
+  .cw-miss{color:var(--muted);text-decoration:line-through;opacity:.45;}
+  .rfooter{margin-top:16px;font-size:12px;color:var(--muted);text-align:center;font-family:'Poppins',sans-serif;}
+  .rfooter b{color:var(--a);}
+
+  /* HISTORY */
+  #history{display:none;flex-direction:column;align-items:center;padding:80px 20px 60px;min-height:100vh;z-index:1;position:relative;}
+  .hcard{background:var(--surf);border:1px solid var(--brd2);border-radius:20px;padding:28px 32px;width:100%;max-width:760px;box-shadow:0 10px 50px var(--shad);position:relative;overflow:hidden;}
+  .hcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--a),var(--a2));}
+  .htop{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+  .htitle{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;}
+  .hclr{background:transparent;border:1.5px solid var(--err);color:var(--err);border-radius:8px;padding:6px 13px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+  .hclr:hover{background:var(--errb);}
+  .hlist{display:flex;flex-direction:column;gap:9px;max-height:480px;overflow-y:auto;padding-right:4px;}
+  .hlist::-webkit-scrollbar{width:3px;}
+  .hlist::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:3px;}
+  .hitem{background:var(--surf2);border:1px solid var(--brd2);border-radius:12px;padding:13px 16px;display:flex;align-items:center;gap:12px;}
+  .hitem-n{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:#000;flex-shrink:0;}
+  .hbody{flex:1;}
+  .hrow1{display:flex;align-items:center;gap:9px;margin-bottom:3px;}
+  .hwpm{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:800;color:var(--a);}
+  .hlang{font-size:11px;color:var(--dim);background:var(--surf3);border-radius:999px;padding:2px 8px;font-family:'Rajdhani',sans-serif;}
+  .hq{font-size:10px;font-weight:700;border-radius:999px;padding:2px 9px;border:1px solid;font-family:'Rajdhani',sans-serif;}
+  .hq.yes{color:var(--ok);border-color:var(--ok);}.hq.no{color:var(--err);border-color:var(--err);}
+  .hrow2{font-size:11px;color:var(--muted);font-family:'Poppins',sans-serif;}
+  .hempty{text-align:center;padding:36px;color:var(--muted);}
+
+  @media(max-width:640px){
+    .lang2{grid-template-columns:1fr;}
+    .tgrid{grid-template-columns:repeat(2,1fr);}
+    .sumg{grid-template-columns:1fr;}
+    .ppane,.typane{padding:16px 18px;}
+    .scard{padding:26px 18px;}
+    #topbar{padding:0 12px;}
+    .sline{width:20px;}.slbl{display:none;}
+    .sg4{grid-template-columns:repeat(2,1fr);}
+    .dash-header,.dash-stats,.comp-toggle-row,.comp-wrap{padding:14px 16px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header id="topbar">
+  <div class="tb-left" onclick="goLanding()">
+    <img src="{% static 'images/logo.png' %}">
+    <div class="tb-name">
+      <strong>Smart Typing Test</strong>
+      <small>RAEBARELI — EST. TYPING PLATFORM</small>
+    </div>
+  </div>
+  <div class="tb-right">
+    <div class="sponsor-tag">
+      <div class="tb-logout" onclick="logout()">Logout</div>
+    </div>
+    <div class="th-btn" onclick="toggleTheme()">
+      <span id="thico">🌙</span><span id="thlbl">Dark</span>
+      <div class="pill" id="tpill"></div>
+    </div>
+  </div>
+</header>
+
+<!-- FLOATING KEYS -->
+<div class="floaters" id="floaters"></div>
+
+<!-- LANDING -->
+<div id="landing">
+  <section class="hero">
+    <div class="hero-image">
+      <img src="{% static 'images/logo.png' %}">
+    </div>
+    <div class="hero-title gtext">Smart Typing Test</div>
+    <div class="hero-guide"><span class="hl"></span></div><br>
+    <p class="hero-sub">India's premier typing practice platform for SSC, UP Police, Court &amp; Govt exam aspirants. Master speed. Achieve accuracy. Get qualified.</p>
+    <div class="hero-btns">
+      <button class="btn-prime" onclick="startSetup()">⌨️ START TYPING TEST</button>
+      <button class="btn-sec" onclick="showHistory()">📊 View History</button>
+    </div>
+    <div class="hero-credit"></div>
+  </section>
+
+  <section class="section">
+    <div class="sec-head">
+      <h2>Why <span class="gtext">Smart Typing Test</span></h2>
+      <p>Built for government exam typing preparation. Everything you need, nothing you don't.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card" data-anim><div class="why-icon-wrap c1">🌐</div><h3>Bilingual Support</h3><p>Practice in English &amp; Hindi (Mangal Font) with curated passages. Seamlessly switch between languages in every session.</p></div>
+      <div class="why-card" data-anim><div class="why-icon-wrap c2">⏰</div><h3>Flexible Timers</h3><p>1, 5, 10, 15 or 30 minute sessions plus custom duration. Match your practice pace to real exam conditions.</p></div>
+      <div class="why-card" data-anim><div class="why-icon-wrap c3">⚡</div><h3>Real-time Feedback</h3><p>Live word highlighting &amp; instant error detection as you type. See every mistake the moment it happens.</p></div>
+      <div class="why-card" data-anim><div class="why-icon-wrap c4">📊</div><h3>Performance Dashboard</h3><p>Gross speed, net speed, accuracy, Full/Half mistakes and qualification status — all in one detailed report.</p></div>
+      <div class="why-card" data-anim><div class="why-icon-wrap c5">🏆</div><h3>Qualification Check</h3><p>30 WPM (English) or 25 WPM (Hindi) — instantly know if you pass the SSC / UP Police standard.</p></div>
+      <div class="why-card" data-anim><div class="why-icon-wrap c6">⌨️</div><h3>Track Progress</h3><p>Every attempt is saved locally. Monitor improvement over time with your full typing history and stats.</p></div>
+      <div class="why-card" data-anim><div class="why-icon-wrap c7">🎯</div><h3>Exam Simulation</h3><p>Full-screen exam mode with auto-submit, countdown and real exam passage format for SSC Steno.</p></div>
+      <div class="why-card" data-anim><div class="why-icon-wrap c8">🔍</div><h3>Passage Comparison</h3><p>Side-by-side original vs typed comparison with red error highlighting — just like real exam checking.</p></div>
+    </div>
+  </section>
+
+  <section class="flist-section">
+    <div class="flist-sec-head"><h2>🧭 <span class="gtext">Practice Features</span></h2></div>
+    <div class="flist-grid">
+      <div class="fli" data-anim-l><span class="fli-icon">📚</span><div class="fli-title">Exam-based typing passages</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">🇮🇳</span><div class="fli-title">Hindi Mangal font &amp; English mode</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">📈</span><div class="fli-title">Beginner → Advanced levels</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">🔀</span><div class="fli-title">Random paragraph generator</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">📋</span><div class="fli-title">Previous year typing format simulation</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">🎓</span><div class="fli-title">SSC Steno Grade C &amp; D prep</div></div>
+    </div>
+  </section>
+
+  <section class="flist-section">
+    <div class="flist-sec-head"><h2>⚡ <span class="gtext">Speed &amp; Accuracy Tools</span></h2></div>
+    <div class="flist-grid">
+      <div class="fli" data-anim-l><span class="fli-icon">🕐</span><div class="fli-title">Live WPM counter</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">🔴</span><div class="fli-title">Real-time mistake highlighting</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">⌫</span><div class="fli-title">Auto backspace error tracking</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">📊</span><div class="fli-title">Gross vs Net speed calculation</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">🎯</span><div class="fli-title">Accuracy percentage meter</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">⚠️</span><div class="fli-title">Full &amp; Half mistake detection</div></div>
+    </div>
+  </section>
+
+  <section class="flist-section">
+    <div class="flist-sec-head"><h2>⏱️ <span class="gtext">Test Mode Features</span></h2></div>
+    <div class="flist-grid">
+      <div class="fli" data-anim-l><span class="fli-icon">⏰</span><div class="fli-title">1/5/10/15/30 min timer</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">🖥️</span><div class="fli-title">Full exam simulation mode</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">✅</span><div class="fli-title">Auto test submit when time ends</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">🏅</span><div class="fli-title">Qualification prediction (Pass / Fail)</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">🚀</span><div class="fli-title">Countdown start animation</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">❌</span><div class="fli-title">Quit &amp; retry anytime</div></div>
+    </div>
+  </section>
+
+  <section class="flist-section">
+    <div class="flist-sec-head"><h2>📊 <span class="gtext">Result &amp; Analytics</span></h2></div>
+    <div class="flist-grid">
+      <div class="fli" data-anim-l><span class="fli-icon">📋</span><div class="fli-title">Detailed result dashboard</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">📅</span><div class="fli-title">Daily / Weekly progress graph</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">🥇</span><div class="fli-title">Best speed record tracking</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">🗂️</span><div class="fli-title">Attempt history saving</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">🏆</span><div class="fli-title">Rank / performance badge system</div></div>
+      <div class="fli" data-anim-l><span class="fli-icon">🔎</span><div class="fli-title">Side-by-side passage comparison</div></div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <div class="footer-logo-row">
+          <img src="{% static 'images/logo.png' %}">
+          <div>
+            <div class="footer-college-name">Smart Typing Test</div>
+          </div>
+        </div><br>
+        <div class="footer-address"></div>
+        <div>
+          <div class="follow-label">Follow Us</div><br>
+          <div class="social-row">
+            <a class="sicon" href="https://www.instagram.com/the_speed_commercial_college?igsh=MXU1djc1aG9nMXV6Zw==" target="_blank" title="Instagram">
+              <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+            <a class="sicon" href="https://t.me/UPSSSCJSST" target="_blank" title="Telegram">
+              <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            </a>
+            <a class="sicon" href="https://maps.app.goo.gl/SkxXfEbBFrtReXHP8?g_st=aw" target="_blank" title="Location">
+              <svg viewBox="0 0 24 24"><path d="M12 0C7.802 0 4 3.403 4 7.602 4 11.8 7.469 16.812 12 24c4.531-7.188 8-12.2 8-16.398C20 3.403 16.199 0 12 0zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-right">
+        <div class="ft-contact-title">Contact Us</div>
+        <div class="ft-ci"><svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>8303308152</div>
+        <div class="ft-ci"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>alokgupta482005@gmail.com</div>
+        <div class="ft-ci"><svg viewBox="0 0 24 24"><path d="M12 0C7.802 0 4 3.403 4 7.602 4 11.8 7.469 16.812 12 24c4.531-7.188 8-12.2 8-16.398C20 3.403 16.199 0 12 0zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/></svg>Degree College Chauraha, Canal Road, Raebareli 229001</div>
+        <div class="ft-dev">Creative Website Designer <br><b>📞 8601111674<br>📞 9580717811</b></div>
+      </div>
+    </div>
+    <div class="footer-copy">Smart Typing Test, Raebareli</div>
+  </footer>
+</div>
+
+<!-- SETUP -->
+<div id="setup">
+  <div class="stepper">
+    <div class="sdot active" id="sd1"><div class="sc">1</div><span class="slbl">Language</span></div>
+    <div class="sline" id="sl12"></div>
+    <div class="sdot" id="sd2"><div class="sc">2</div><span class="slbl">Timer</span></div>
+    <div class="sline" id="sl23"></div>
+    <div class="sdot" id="sd3"><div class="sc">3</div><span class="slbl">Passage</span></div>
+    <div class="sline" id="sl34"></div>
+    <div class="sdot" id="sd4"><div class="sc">4</div><span class="slbl">Font</span></div>
+    <div class="sline" id="sl45"></div>
+    <div class="sdot" id="sd5"><div class="sc">5</div><span class="slbl">Start</span></div>
+  </div>
+  <div class="svp">
+    <div class="slide active" id="sl1">
+      <div class="scard s1-bg">
+        <span class="se">🌐</span><div class="st">LANGUAGE CHUNEIN</div>
+        <div class="ss">Kis language mein typing test dena chahte hain?</div>
+        <div class="lang2">
+          <div class="lcard" id="lc-en" onclick="selLang('english')"><div class="lc-check">✓</div><span class="lc-icon">ENGLISH</span><div class="lc-name">ENGLISH</div><div class="lc-sub">Standard Keyboard</div><div class="lc-badge">QUALIFY: 30 WPM+</div></div>
+          <div class="lcard" id="lc-hi" onclick="selLang('hindi')"><div class="lc-check">✓</div><span class="lc-icon">HINDI</span><div class="lc-name">हिंदी</div><div class="lc-sub">Mangal Font · Devanagari</div><div class="lc-badge">QUALIFY: 25 WPM+</div></div>
+        </div>
+        <div class="back-row"><span class="sloc">Step 1 of 5 · Select to advance</span></div>
+      </div>
+    </div>
+
+    <div class="slide" id="sl2">
+      <div class="scard s2-bg">
+        <span class="se">⏱️</span><div class="st">DURATION CHUNEIN</div>
+        <div class="ss">Test kitne minute ka hoga?</div>
+        <div class="tgrid">
+          <div class="topt" onclick="selTimer(1,this)"><div class="tn">1</div><div class="tl">MIN</div></div>
+          <div class="topt" onclick="selTimer(5,this)"><div class="tn">5</div><div class="tl">MIN</div></div>
+          <div class="topt" onclick="selTimer(10,this)"><div class="tn">10</div><div class="tl">MIN</div></div>
+          <div class="topt" onclick="selTimer(15,this)"><div class="tn">15</div><div class="tl">MIN</div></div>
+          <div class="topt" onclick="selTimer(30,this)"><div class="tn">30</div><div class="tl">MIN</div></div>
+          <div class="topt" id="copt" onclick="showCust(this)"><div class="tn">✎</div><div class="tl">CUSTOM</div></div>
+        </div>
+        <div class="cbox hidden" id="cbox"><input type="number" class="cinp" id="cinp" min="1" max="120" placeholder="Minutes (1–120)"><button class="cset" onclick="confirmCust()">SET ✓</button></div>
+        <div class="back-row"><button class="nbk" onclick="goSlide(1)">← Back</button><span class="sloc">Step 2 of 5</span></div>
+      </div>
+    </div>
+
+    <div class="slide" id="sl3">
+      <div class="scard s3-bg">
+        <span class="se">📄</span><div class="st" id="s3t">PASSAGE SELECT KAREIN</div>
+        <div class="ss">Jo passage type karna ho usse choose karein</div>
+        <div class="plist" id="plist"></div>
+        <div class="back-row"><button class="nbk" onclick="goSlide(2)">← Back</button><span class="sloc">Step 3 of 5</span></div>
+      </div>
+    </div>
+
+    <div class="slide" id="sl4">
+      <div class="scard s4-bg">
+        <span class="se">🔡</span><div class="st">FONT SIZE CHUNEIN</div>
+        <div class="ss">Preview dekh kar choose karein</div>
+        <div class="fsgrid">
+          <button class="fsb" onclick="selFS(14,this)">14px</button>
+          <button class="fsb" onclick="selFS(16,this)">16px</button>
+          <button class="fsb sel" onclick="selFS(18,this)">18px ✓</button>
+          <button class="fsb" onclick="selFS(20,this)">20px</button>
+          <button class="fsb" onclick="selFS(24,this)">24px</button>
+          <button class="fsb" onclick="selFS(28,this)">28px</button>
+        </div>
+        <div class="fprev" id="fprev" style="font-size:18px;">ABCDE abcde 12345<span style="font-family:'Noto Sans Devanagari',sans-serif;display:block;margin-top:6px;">तेज़ भूरी लोमड़ी आलसी कुत्ते के ऊपर से कूद गई।</span></div>
+        <div class="back-row" style="margin-top:14px;">
+          <button class="nbk" onclick="goSlide(3)">← Back</button>
+          <span class="sloc">Step 4 of 5</span>
+          <button class="nxt" onclick="goSlide(5)">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide" id="sl5">
+      <div class="scard s5-bg">
+        <span class="se">🚀</span><div class="st">ENTER TYPING ARENA</div>
+        <div class="ss">Confirm selections aur test shuru karein</div>
+        <div class="sumg">
+          <div class="sumi"><div class="suml">Language</div><div class="sumv" id="svl">—</div></div>
+          <div class="sumi"><div class="suml">Duration</div><div class="sumv" id="svt">—</div></div>
+          <div class="sumi"><div class="suml">Passage</div><div class="sumv" id="svp2" style="font-size:11px;letter-spacing:0;font-family:'Poppins',sans-serif;">—</div></div>
+          <div class="sumi"><div class="suml">Font Size</div><div class="sumv" id="svf">18px</div></div>
+        </div>
+        <div class="toggle-options">
+          <div class="tog-row"><div class="tog-label">Backspace Tracking<small>Off = Backspace key disabled during test</small></div><div class="tog-sw on" id="tog-bs" onclick="toggleOpt('bs')"></div></div>
+          <div class="tog-row"><div class="tog-label">Word Highlight<small>Off = No green/red highlighting on passage</small></div><div class="tog-sw on" id="tog-hl" onclick="toggleOpt('hl')"></div></div>
+        </div>
+        <div class="instruc"><b>📋 INSTRUCTIONS:</b><br>• Screen automatically <b>Fullscreen</b> ho jayegi<br>• <b>Upar 50%</b> → Passage &nbsp;|&nbsp; <b>Neeche 50%</b> → Typing area<br>• Sahi word → <span class="ic">✅ Green</span> &nbsp;|&nbsp; Galat word → <span class="ie">❌ Red underline</span><br>• <b>SPACE</b> dabane par word submit hoga</div>
+        <button class="startbtn" onclick="startTest()">⌨️ &nbsp;START TEST</button>
+        <div class="shint">🖥️ Fullscreen activate hoga · Hindi ke liye Chrome recommended</div>
+        <div class="back-row" style="margin-top:14px;"><button class="nbk" onclick="goSlide(4)">← Back</button><span class="sloc">Step 5 of 5</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer">Smart Typing Test, Raebareli</div>
+</div>
+
+<!-- TEST -->
+<div id="test">
+  <div class="thdr">
+    <div class="tlogo">Smart Typing Test</div>
+    <div class="ttime" id="ttime">00:00</div>
+    <div class="lstats">
+      <div class="ls"><span class="lsl">WPM</span><span class="lsv" id="lv-wpm">0</span></div>
+      <div class="ls"><span class="lsl">Acc</span><span class="lsv" id="lv-acc">100%</span></div>
+      <div class="ls"><span class="lsl">Words</span><span class="lsv" id="lv-w">0</span></div>
+      <div class="ls"><span class="lsl">Errors</span><span class="lsv" id="lv-e">0</span></div>
+    </div>
+    <button class="quit-btn" onclick="quitTest()">✕ Quit</button>
+    <button class="pause-btn" id="pauseBtn" onclick="toggleTimer()">⏸ Pause</button>
+    <button class="submit-btn" onclick="endTest()">✔ Submit</button>
+  </div>
+  <div class="tbody">
+    <div class="ppane" onclick="focusInp()">
+      <div class="pcontent" id="pcontent"></div>
+      <div class="progw"><div class="progf" id="progf"></div></div>
+    </div>
+    <div class="typane" onclick="focusInp()">
+      <div class="tylbl">⌨️ TYPE BELOW — PRESS SPACE AFTER EACH WORD</div>
+      <div class="ty-para" id="ty-para"></div>
+      <input type="text" class="rinp" id="rinp" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <div class="tyftr"><span class="kb">Space</span> submit word &nbsp;|&nbsp; <span class="kb">Backspace</span> delete<span style="margin-left:auto;font-size:11px;color:var(--dim);" id="ltag"></span></div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <div class="dash-wrap">
+    <div class="dash-header">
+      <div class="dash-title-row">
+        <div class="dash-title gtext">Performance Dashboard</div>
+        <div class="speed-tog-row">Speed based on Time Taken <div class="tog-sw on" id="rtog" onclick="toggleSpeedBase()"></div></div>
+      </div>
+      <div class="dash-info-grid">
+        <div class="dash-info-item"><b>Total Words Given:</b> <span id="ri-twg">—</span></div>
+        <div class="dash-info-item"><b>Typing Date:</b> <span id="ri-date">—</span></div>
+        <div class="dash-info-item"><b>Passage Title:</b> <span id="ri-ptitle">—</span></div>
+        <div class="dash-info-item"><b>Time Duration:</b> <span id="ri-dur">—</span></div>
+        <div class="dash-info-item"><b>Time Taken:</b> <span id="ri-taken">—</span></div>
+      </div>
+    </div>
+    <div class="dash-stats">
+      <div class="sg4">
+        <div class="stile"><div class="stile-lbl">Total Words Typed</div><div class="stile-val" id="rs-twt">—</div><div class="stile-ico">⌨️</div></div>
+        <div class="stile t-err"><div class="stile-lbl">Full Mistake</div><div class="stile-val" id="rs-fm">—</div><div class="stile-ico">⊗</div></div>
+        <div class="stile t-warn"><div class="stile-lbl">Half Mistake</div><div class="stile-val" id="rs-hm">—</div><div class="stile-ico">⚠</div></div>
+        <div class="stile"><div class="stile-lbl">Net Wrong Words</div><div class="stile-val" id="rs-nww">—</div><div class="stile-ico">⊗</div></div>
+      </div>
+      <div class="sg4">
+        <div class="stile"><div class="stile-lbl">Omissions</div><div class="stile-val" id="rs-om">—</div><div class="stile-ico">⏭</div></div>
+        <div class="stile t-warn"><div class="stile-lbl">Extra Spaces</div><div class="stile-val" id="rs-es">0</div><div class="stile-ico">⎵</div></div>
+        <div class="stile t-warn"><div class="stile-lbl">Backspace Count</div><div class="stile-val" id="rs-bs">—</div><div class="stile-ico">⌫</div></div>
+        <div class="stile t-ok"><div class="stile-lbl">Correct Words</div><div class="stile-val" id="rs-cw">—</div><div class="stile-ico">✓</div></div>
+      </div>
+      <div class="sg4">
+        <div class="stile"><div class="stile-lbl">Gross Speed</div><div class="stile-val" id="rs-gs">—</div><div class="stile-ico">🏎</div></div>
+        <div class="stile net-hi"><div class="stile-lbl">⚡ Net Speed (WPM)</div><div class="stile-val" id="rs-ns">—</div><div class="stile-ico">🎯</div></div>
+        <div class="stile t-acc"><div class="stile-lbl">Accuracy %</div><div class="stile-val" id="rs-acc">—</div><div class="stile-ico">%</div></div>
+        <div class="stile" id="rs-status-tile"><div class="stile-lbl">Status</div><div class="stile-val" id="rs-status">—</div><div class="stile-ico">🎯</div></div>
+      </div>
+      <div class="qual-info"><span style="font-size:16px;flex-shrink:0">🔴</span><span id="rs-info">Calculating...</span></div>
+      <div class="dash-actions">
+        <button class="abtn p" onclick="retryTest()">🔄 RETRY</button>
+        <button class="abtn s" onclick="goSetup()">⚙️ NEW SETUP</button>
+        <button class="abtn s" onclick="showHistory()">📊 HISTORY</button>
+        <button class="abtn s" onclick="goLanding()">🏠 HOME</button>
+        <button class="abtn p" onclick="nextExercise()">➡️ NEXT EXERCISE</button>
+      </div>
+    </div>
+    <div class="comp-toggle-row"><div class="comp-toggle-lbl">Detailed Comparison</div><div class="tog-sw on" id="comp-tog" onclick="toggleComparison()"></div></div>
+    <div class="comp-wrap" id="comp-wrap">
+      <div class="comp-grid">
+        <div><div class="comp-pane-title">📄 Original Passage</div><div class="comp-pane comp-orig" id="comp-orig"></div></div>
+        <div><div class="comp-pane-title">⌨️ Typed Passage</div><div class="comp-pane comp-typed" id="comp-typed"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="rfooter">Smart Typing Test, Raebareli</div>
+</div>
+
+<!-- HISTORY -->
+<div id="history">
+  <div class="hcard">
+    <div class="htop"><div class="htitle">📊 TYPING HISTORY</div><button class="hclr" onclick="clearHistory()">🗑 Clear All</button></div>
+    <div class="hlist" id="hlist"></div>
+  </div>
+  <div style="margin-top:18px;"><button class="btn-sec" onclick="goLanding()">← Back to Home</button></div>
+  <div class="page-footer" style="margin-top:24px;">Smart Typing Test, Raebareli</div>
+</div>
+
+<script>
+/* ═══ PASSAGES ═══ */
+const PASSAGES={
+  english:[
+  {id:'e1',title:"1. Christmas & Community Spirit",lang:"english",diff:"easy",text:'We believe these are what all of us need right now. Look for ways to help one another this Christmas. Reach out to loved ones to tell them how much they mean to you. Because the greatest gift you can give someone is love. This Christmas is going to be very different for our community. The COVID 19 pandemic will alter many of our familiar traditions. Yet, this Christmas is a perfect day to reflect on that story deeper meanings, which are as relevant today as they were two millennia ago. Those lessons are not specific to Christianity. Indeed, almost anyone can find inspiration in the story of a young, weary family, making a difficult journey and the birth of a baby boy into the lowliest circumstances that would later change the world. There are families in similar situations today. Thousands of families in Canada struggled to keep a roof over their heads this year. Thousands more lost their jobs to COVID due to a ravaged economy, and, tragically, thousands more lost their lives to the disease. And yet, so many of us who face tremendous obstacles and terrifying adversity kept moving, working, and pushing forward out of faith that things can get better. Small acts of courage change the world around us, sometimes insignificant, obvious ways, but much more commonly by touching one or two lives with hope and encouragement that ripple out endlessly. The holiday season is, coincidentally, the time of year when we are most generous with our time and money. We are tremendously giving people, donating millions of dollars to charity and volunteering countless hours. This generous spirit unites us all. Hopefully, the Christmas story reminds us that we need not give frankincense, gold and myrrh or more modern expensive gifts to show love and admiration. As for making the season special, we all have to adjust our Christmas plans this year due to COVID. We won spend the holidays with family and friends who don live in our household. But there are still many ways to enjoy the season. Listening to all your favorite Christmas music is always a great way to have fun. Decorating your indoor and outdoor spaces can be a lot of fun, too. As Christmas draws closer, a family drive to see the Christmas lights and displays in people yards can be a right, safe way to celebrate. It is also essential to let people know you are thinking of them with anything from a gift to dropping a few lines to someone from afar. So no, Christmas won be the same this year, but that does mean it can still be the uplifting season we all need now more than ever. Merry Christmas! Give up such responsibility. It must have also realized that its ability to improve governance in PSBs has reached its limits. However, there is no evidence that all is well with the private banks, and they can deliver better to the people the banking requirements than PSBs.'},
+  {id:'e2',title:"2. Jammu & Kashmir — Kashimiriyat",lang:"english",diff:"hard",text:'Jammu and Kashmir has been known for communal harmony, and even local terrorists will not be able to tarnish this reputation. If we look at the recent past, then we can say that the identity of Kashmir is protected in India. Fundamentally, Kashmir is the land of Rishis and Sufi saints, and their message is deep rooted in the hearts of Kashmiris, irrespective of faiths and beliefs. Not only that, it has the capacity and scope to expand, creatively vocalise, and mature. It also has excellent prospects to spread its outcome all over the country. The convergence of Mahayana Buddhism and Islam in some parts of Persia and Central Asia resulted in the evolution of Islamic mystics. The Sufis founded several orders by incorporating Hindu and Buddhist philosophies. The meeting of two great traditions of Saivism, the Hindu monistic philosophy of Kashmir, and Erfan of Muslim. It gradually took place, giving rise to a unique order of Rishis whose philosophical beliefs led to the idea of religious tolerance and shared faith in God, which Kashmiris always cherished. Somnath Dhar, Jammu and Kashmir, National Book Trust of India, New Delh. Rishi Sufism, a social, cultural and religious space where several Hindus and Muslims once practised their faiths, was one of the most prevalent expressions of Kashmiri at in the century. The Rishi Sufis practice shaped the concept of the immanency of God, respect for all religions, beliefs in miracles, reincarnation, meditation, and asceticism from Hinduism and the spirit of Eightfold Paths from Buddhism. It incorporated these into the concept of transcendence of God and to the spirit of the Five Pillars of Islam for launching the syncretic space for inter religious interactions. The ethno cultural symbiotic consciousness, and Hindu Buddhist inter religious symbiotic spiritual consciousness, shaped the evolution of the Kashmiri at. Kashmir at is a concept of tolerance and inclusivity of all faiths and beliefs, thus respecting all religious traditions and festivals. It embodies communal harmony, literary heights, spirituality and symbiotic relationship among different communities. Kashimiriyat is imminent in all aspects of the Kashmiri people life, and it is the powerful shaper of its people religious and cultural life. The comforting wisdom expressed in the local Kashmiri language by the Rishis provided solace in difficult times. Despite the cultural invasion of Kashmir Valley, Kashmir at has survived as a unique language due to various favorable historical reasons and other factors.'},
+  {id:'e3',title:"3. ESG & Climate Action",lang:"english",diff:"hard",text:'Many faiths and belief systems regulate the people of India. Kashmir civilisation is a splendid reflection of India civilisation, which promote composite culture and pluralism. So far, Pakistan has tried to weaken the very spirit of Kashmiri at, but Pakistan must appreciate that in a struggle between secularism and fundamentalism, the former is always the winner. The faith of the people of J K in the socio cultural fabric of Hindu Muslim is indestructible. We must not see this conflict in J K between Hindus and Muslims but as between national and anti national forces. The Pakistani strategy during the insurgency phase was to create social and communal disorder and weaken the secular base. Pakistan was under the impression that Kashmiri at had no psychic roots in the state, except in the plural reverence for other religions. This misapprehension encouraged Pakistan to transplant its fundamentalist ideology to combat the liberal Hindu ideal of the brotherhood of man, which comes from the Indian philosophy of Sarva dharma sambhava. At the United Nations Framework Convention for Climate Change UNFCCC 26th Conference of the Parties COP26 in Glasgow last year, Hon ble Prime Minister Narendra Modi outlined a five point strategy to drive positive climate action. Besides committing to increase non fossil energy capacity to 50GW by 2030 and meet half of all energy needs from renewable sources; India also put forward its goal to reducing at least one billion tonnes of total projected emissions between now and 2030. This eventually would place India on the path to achieving Net Zero emissions target by 2070. India has the lowest per capita emissions at just 1.9 tonnes of carbon dioxide per head, compared with 15.5 tonnes in the US and 12.5 tonnes in Russia, as per 2019 data. Thus, the new roadmap for a cleaner future has strong implications for the business sector. Our new roadmap is underpinned by the new Environment, Social, and Governance ESG reporting requirements for the business sector. The Securities and Exchange Board of India SEBI has called for mandatory disclosures through the new Business Responsibility and Sustainability Report BRSR format from FY2022 23 for the top 1,000 listed companies.'},
+  {id:'e4',title:"4. Psoriasis & UPI Digital Payments",lang:"english",diff:"hard",text:'A multisystem inflammatory disease like Psoriasis requires constant attention to control the inflammation and prevent frequent flare ups. If mismanaged, psoriasis can cause a range of health complications such as hypertension, diabetes, kidney disease, skin problems and cardiovascular diseases. Correct treatment can not only alleviate the symptoms but also treat persisting skin problems. With treatment adherence, patients can get clearer skin, which can further motivate them in long term management of Psoriasis. Therefore, regular communication is fundamental for the right treatment, advice, and information. For psoriasis management, there are several safe and effective therapy options available today. Determining the right treatment method depends on several factors including the patient disease severity, risk of comorbidities and susceptibility to various risk factors. Advanced therapies, including biologics, have added to the options of therapeutic treatment of moderate to severe Psoriasis. They are highly effective in successfully disrupting the disease cycle. It has a favorable risk reward profile and is well tolerated by patients. This has proven to improve acceptance and facilitate better adherence. Psoriasis patients need holistic treatment and support, right from the initial stages. We need an understanding of the barriers to treatment adherence and accessible information for both patients and clinicians. There is a clear need in India for multi stakeholder interventions, uniting patient groups, specialists including dermatologists and rheumatologists, the government, industry bodies and private players towards establishing a patient centric model of care while driving emotional and social support.'},
+  {id:'e5',title:"5. UPI Safety & Fintech Growth",lang:"english",diff:"medium",text:'Adds a new payment account or makes a transaction. In other words, every transaction is authenticated with the UPI PIN, which acts as a safety net and prevents fraudsters from misusing the app on a device or making a payment from an account as the UPI PIN is known only to the user. The paramount rule here is Never reveal your PIN to anyone. Here fraudsters may try to misuse the request money feature on payment apps. But what one needs to remember is that if money has to be credited it will never ask for the PIN. Beware of counterfeit apps There are many fake apps that may look similar to the original bank app and are easily available for download. Installing such fake apps, makes sensitive information vulnerable to fraudsters. Personal information of users are extracted under the guise of some important banking service or transaction. While UPI is definitely one of the safest and most secure platforms for cashless transactions, but as with the platform, the onus equally lies with the users as well to observe safety standards and practices. In case of UPI, customers fall prey to fraudsters owing to their own ignorance and lack of knowledge. It is therefore extremely important that even while we adapt to contactless payments such as UPI, we are mindful while transacting digitally and are responsible to keep a tight check on any form of inadvertent behavior. We are in an era where the rate of finch adoption is bizarrely exceeding the rates of Fitch Innovation.'},
+  {id:'e6',title:"6. Urban Planning in India",lang:"english",diff:"hard",text:'A highlight of Census 2011 was the surge in urban settlements over the previous decade. The count was 7,933 urban settlements. About 65% of these settlements did have a master plan, according to a Nitti Aayog report in 2021. Moreover, almost half of them continue to be governed as rural entities. It problematic because urban India is not just the primary engine of economic growth, but it where most of the future population growth is expected. GOI estimated that urbanisation contributed to almost 60% of GDP, and almost 75% of the population increase by 2036 will be on account of urban growth. The problem has two dimensions. First, states have undermined the spirit of the 74th constitutional amendment of 1992 that envisaged the transfer of the urban planning function to an elected local government. Second, inadequate devolution of powers has deprived master plans of a sense of reality. They are out of sync with the evolution of urban settlements. A common critique is that they are inflexible and overemphasis zoning. The problem here is that master plans, which take a macro view of urban areas, failed to account for the informal nature of urban India employment market. Consequently, zoning plans run into unexpected growth of clusters linked to informal jobs. The end result is that basic urban infrastructure is either patchy or non-existent. Master plans remain essential to prevent chaos and enhance the quality of urban life.'},
+  {id:'e7',title:"7. AI in Education",lang:"english",diff:"medium",text:'Learning process accordingly. This means that teachers can focus on our unique needs and abilities, helping us excel at our own pace. Timely feedback and improved assessments Have you ever wondered if there was a way to get immediate feedback on your assignments? AI can help with that By using AI-powered assessment tools, our teachers can grade student work quickly and give us feedback right away. This way, we can understand where we need to improve and build on our strengths. Identifying and bridging learning gaps In India, we face disparities in access to quality education in different regions. AI can help us bridge this gap. By analyzing data, AI can pinpoint areas where students need more support and resources. This insight allows policymakers to allocate educational resources more efficiently, ensuring that every student has an equal opportunity to succeed. Streamlining administrative tasks AI can also assist our teachers and school administrators in managing administrative tasks more efficiently. By automating processes like enrollment, record-keeping, and scheduling, our teachers can devote more time to teaching and mentoring us. This can lead to a smoother educational experience for everyone. Lifelong learning and up skilling: AI can facilitate lifelong learning by offering personalized, on-demand courses tailored to individuals evolving career goals and interests.'},
+  {id:'e8',title:"8. EV Industry — Challenges",lang:"english",diff:"hard",text:'Like motor test benches, mixed signal oscilloscopes and cell battery cyclers some of which can cost 3 5 cores each. Even if the funding could be raised by startups to afford these R D costs, talent remains a major bottleneck that prevents India from being globally competitive. Countries like the USA and China have been investing in automobiles and EVs for so long that their EV industries have developed immense expertise in the field. India is unfortunately still lagging behind and many organizations struggle to recruit quality engineers. This struggle is especially worse for startups, many of whom struggle to compete with the pay packages and benefits that large manufacturers like Tata Motors, Mercedes Benz and Mahindra can provide. All of these struggles are occurring in the backdrop of major supply chain crises the EV production process has been called a manufacturing hell because of its numerous bottlenecks. The process of making automobiles involves high fixed costs, and complicated coordination with different suppliers to source various materials and components. These are issues that are mitigated by economies of scale but that requires significant capital and investment there is a good reason why the gap between making a prototype and mass producing an EV is ominously called the valley of death.'},
+  {id:'e9',title:"9. GST — India Tax Reform",lang:"english",diff:"hard",text:'Following World War II, the United States of America anointed itself the leader of the free world, committed to planting the flag of democracy globally. Much of this global positioning was facilitated by a celebration of its constitution. The constitution, though written in dense legal prose, enshrined the concepts of liberty, equality and freedom. Nourished by a powerful Supreme Court and gushing popular culture portrayals, it became the global gold standard for constitutional documents. Oil producers and refineries exporting downstream products have had a good run this year. Consequently, on June 30, GoI levied an indirect tax on them to capture a part of the windfall gains. The levy of indirect taxes in the form of chess on domestic crude production sold at import parity prices, and on export of petrol, diesel and aviation turbine fuel will accrue entirely to GoI. This is because a chess is not part of the divisible pool of taxes that has to be shared with states. Last week, the GST Council had a two day meeting where steps to reform the structure of the indirect tax by closing some exemptions and correcting inverted duties were approved. Its a welcome move. GST has withstood stress tests in 2020 21 when the economy contracted.'},
+  {id:'e10',title:"10. Digital Public Goods — India Stack",lang:"english",diff:"hard",text:'Appointment scheduling, and issuance of digital certificates. As a result, more than 140 countries have shown interest in adopting it. In line with the philosophy, Vasudhaiva Kutumbhakam the entire world as one family, India has developed these technologies as free and open source software for all countries to leverage to accelerate digitization and promote collective growth. The development of these open-source software, data, AI models, standards and content for social good, also referred to as digital public goods are a result of synergies arising from the combined efforts of arkar government, amaaj community and Bazaar market. The government Sarkaar hosts and maintains the products such as the India Stack, DIKSHA and CoWIN with an aim to leverage the power of technology and digital infrastructure, to create an inclusive, empowered, and digitally-enabled society. The India Stack consists of multiple products of which the Aadhar, e-auth and e-KYC is run by the Unique ID Authority of India.'}
+  ],
+  hindi:[
+  {id:'h1',title:"1.विज्ञान के चमत्कार",lang:"hindi",diff:"medium",text:'हम विज्ञान के युग में पैदा हुए और जी रहे हैं, इसलिए विज्ञान के चमत्कारों का उतना अहसास हमें नहीं होता जितना कि यदि हमारे पूर्वज पृथ्वी पर आ कर देखें तो उन्हें हो। निश्चय जानिए वे हमारी धरती को पहचान नहीं पाएँगे और यह भी सच है कि वे पागल हो जाएँगे विज्ञान के करिश्मों को देख-देख कर। हम सभी जानते हैं कि जब हमारे देश में पहली रेलगाड़ी चलाई गई थी तो आम लोगों ने उसे भूत और राक्षस समझा और हर जगह उसका ढेलों और पत्थरों से स्वागत किया। इतिहास साक्षी है, यूक्लिड जब जमीन पर तरह-तरह की रेखाएँ खींचकर अपने सिद्धांत को दुहराता, उसकी परीक्षा करता तो लोग उसे पागल कहते, उसकी भाषा को शैतान की भाषा बताते। आम जनता को विश्वास हो गया कि शैतान उसने अपने वश में कर लिया है, उसकी सिद्धि प्राप्त कर ली है। यदि पास-पड़ोस में कहीं हैजा, कहीं चेचक या प्लेग फैलता तो लोग कहते यह यूक्लिड की करतूत है। फल यह हुआ कि लोगों ने उसे पागल या शैतान ही करार नहीं दिया, बल्कि जान से मार देने की भी धमकी दी सत्य की खोज को विज्ञान कहते हैं, अर्थात् विज्ञान वह है जो प्रकृति में छिपे सत्य या रहस्य को ढूँड निकालता है।'},
+  {id:'h2',title:"2.परोपकार",lang:"hindi",diff:"easy",text:'ईश्वर ने जितने भी प्राणी बनाए हैं, उनमें मनुष्य सबसे श्रेष्ठ प्राणी है। पशु और पक्षी मात्र अपने उपकारी के प्रति कृतज्ञता प्रकट करते हैं। यदि मनुष्य भी मात्र अपने उपकारी के प्रति कृतज्ञता प्रकट करे, तो हममें और पशुओं में अंतर ही क्या रहेगा? हमें तो पशुओं से एक कदम आगे बढ़कर परोपकारी बनना चाहिए। उपकार के बदले में यदि हमने किसी के प्रति उपकार किया, तो उसका महत्व ही क्या रह जाता है। वास्तविक उपकार तो वही है जो किसी अपरिचित के साथ किया जाए। इससे भी बढ़कर उपकार का महत्व तब होता है जब किसी अपकारी-अपने साथ बुरा व्यवहार करने वाले के साथ किया जाता है। उपकार करने वाले के प्रति जो सज्जनता दिखाता है, उसकी सज्जनता में क्या विशेषता है। विचारवान लोग तो उसे ही सज्जन कहते हैं जो अपकार के प्रति भी सज्जनता का व्यवहार करता है। उपकार करने के बाद प्रत्युपकार की आशा रखना भी उचित नहीं। इससे मन को शांति नहीं मिल सकती। कर्त्तव्य-भावना से ही उपकार करना चाहिए। इसीलिए तो कहा जाता है नेकी कर दरिया में डाल।'},
+  {id:'h3',title:"3.शिक्षा का महत्व",lang:"hindi",diff:"hard",text:'भारतीय संस्कृति में ज्ञान को मनुष्य का तृतीय नेत्र बताया गया है। विद्या ही मनुष्य के शील का एक श्रृंगार है। यही विवेक का मूल है। शिक्षा राष्ट्र की आंतरिक सुरक्षा है, जीवन की सफलता का दिव्य साधन है। विद्या ही वह साधन है जिसके द्वारा मनुष्यता का विकास है। शिक्षा शून्य व्यक्ति तो पशु समान ही होता है। इतना ही नहीं, शिक्षा मनुष्य के लिए छायादार वृक्ष के समान है। उसके द्वारा मनुष्य के जीवन का सर्वांगीण विकास होता है। शिक्षा की संपत्ति संसार के सब धनों से विलक्षण है। अन्य धन नष्ट हो सकते हैं, चुराए जा सकते हैं, शासन द्वारा जब्त किए जा सकते हैं, किंतु शिक्षा रूपी धन इन विपदाओं से मुक्त है। इसे न चुरा सकता है, न राजा छीन सकता है और न भाई-बंधु बाँट सकते हैं। इस धन की सबसे विलक्षणता यह है कि ज्यों-ज्यों व्यय किया जाता है, त्यों-त्यों यह बढ़ता ही जाता है।'},
+  {id:'h4',title:"4.प्रजातंत्र और नागरिक",lang:"hindi",diff:"hard",text:'प्रजातंत्र के एक नागरिक के मूलभूत गुणों में से यह भी है कि उसमें अपने साथियों के अच्छे जीवन के लिए गहन रुचि या गहरी चिंता हो। उसमें सामाजिक उत्तरदायित्व का भाव और अपने तात्कालिक स्वार्थों को तथा अपने समुदाय के स्वार्थों की सामान्य जन के हित में दबाने की इच्छाशक्ति हो, साथ ही पूरे समुदाय के हित का पूरा भागीदार बने। लेकिन मात्र ये गुण उसे या तो मठाधारी तानाशाह अथवा अव्यावहारिक अनुयायी बना सकते हैं। प्रजातंत्र के नागरिक को एक स्वतंत्र निर्णय लेने वाला व्यक्ति भी होना चाहिए। उसे अन्य व्यक्तियों के हितों का सम्मान करने वाला होना चाहिए और इसलिए अपने मन्तव्य के विरुद्ध टकराने वाले मतों के प्रति सहिष्णु हो तथा उसे शक्ति-प्रयोग की अपेक्षा वाद-विवाद और प्रत्यायन को वरीयता देनी चाहिए।'},
+  {id:'h5',title:"5.समय का सदुपयोग",lang:"hindi",diff:"easy",text:'समय का सदुपयोग ही जीवन की सफलता की कुंजी है। हमारा जीवन क्षण-क्षण के योग से बना है। अधिकांश लोग क्षण भर के समय का मूल्य नहीं समझते। यही उनकी भूल है। कारण, जीवन क्षण-भंगुर और अनिश्चित है। पता नहीं कहाँ और किस समय मृत्यु का निमंत्रण आ जाए। अतः हमें इस संक्षिप्त, किंतु अनिश्चित समय में बहुत सारे काम करने हैं। यदि हमने अपने समय को व्यर्थ की गपशाप और आलस्य में नष्ट कर दिया, तो हम जीवन में कोई महान कार्य नहीं कर सकेंगे। तब सफलता हमसे दूर भागेगी। अतः हर एक पल को काम में लाना चाहिए। समय धन से भी बहुमूल्य है। धन तो फिर कमाया जा सकता है, किंतु जो समय बीत गया, वह फिर नहीं आ सकता।'},
+  {id:'h6',title:"6.खेल और स्वास्थ्य",lang:"hindi",diff:"easy",text:'मानव जीवन की सफलता के लिए तीन शक्तियों के विकास की आवश्यकता है मानसिक, आत्मिक और शारीरिक। यदि इनमें से मानसिक शक्ति के विकास का अभाव होगा, तो मनुष्य की बुद्धि सूझबूझ से कार्य करने में असमर्थ रहेगी। आत्मिक विकास के अभाव में मानव मात्र पशु होगा और शारीरिक शक्ति के अभाव में उसकी काया क्षीण, व्याधि-ग्रस्त और शिथिल होगी। इन तीनों शक्तियों के विकास के लिए विचारकों ने पृथक-पृथक उपाय बताए हैं। शास्त्रों और प्राचीन ग्रंथों के अध्ययन से मानसिक शक्ति का विकास होता है। धर्म चर्चा एवं सामाजिक कार्य करते हुए आत्मिक शक्ति बढ़ती है और व्यायाम एवं नियमित आहार-व्यवहार से शारीरिक शक्ति की उन्नति होती है।'},
+  {id:'h7',title:"7.स्वावलंबन",lang:"hindi",diff:"medium",text:'जीवन की प्रेरणा और समाज का हित, इन्हीं दो आदर्शों को सम्मुख रखकर जीवन, जीवन बन सकता है। मनुष्य की हार्दिक अभिलाषा होती है कि मैं जीवित रहूँ और जीने के योग्य बनूँ, परंतु जीवन की सार्थकता तभी है, जब जीवन में सुखद साधन प्राप्त हों। मनुष्य विद्याध्ययन करता है कि मैं अपने जीवन को सुंदर, पुष्ट, सुखी तथा ऐश्वर्यपूर्ण बनाऊँ, परंतु विद्या का प्रयोग तब तक सफल नहीं, जब तक उसमें स्वावलंबन न हो। स्वावलंबन का अर्थ है आत्मनिर्भर होना। यदि अपने परिवार के धन की सहायता से या किसी अन्य की आर्थिक सहायता से विद्याध्ययन किया जाए या किसी भी प्रकार का कार्य किया जाए, तो उसका आनंद एकमात्र स्वार्थानंद होगा।'},
+  {id:'h8',title:"8.स्वतंत्रता दिवस",lang:"hindi",diff:"easy",text:'भारतीयों के लिए यह दिन बहुत ही प्रसन्नता का द्योतक है। आज के दिन शताब्दियों से जकड़ा हुआ भारत स्वतंत्र हुआ। भारत की स्वतंत्रता के लिए कई बार विदेशियों से युद्ध हुए, किंतु दुर्भाग्यवश भारत स्वतंत्र न हो सका। सन् 1857 का विद्रोह भी भारत की स्वतंत्रता के लिए हुआ था। उस समय आपस की फूट के कारण भारतीयों को मुँह की खानी पड़ी। पर वह विद्रोह दब न सका, समय-समय पर जागृत होता रहा। भारत की स्वतंत्रता के लिए कई महापुरुषों का बलिदान हुआ। अरबों की संपत्ति का नाश हुआ। अंत में महात्मा गांधी तथा अन्य नेताओं के अकथनीय परिश्रम से 15 अगस्त, 1947 को भारत स्वतंत्र हुआ।'},
+  {id:'h9',title:"9.मेरा गाँव",lang:"hindi",diff:"medium",text:'मेरा गाँव बहुत सुंदर है। यह शहर से 20 किलोमीटर दूर है। गाँव में लगभग 500 परिवार रहते हैं। यहाँ के लोग बहुत अच्छे हैं। सभी एक-दूसरे की मदद करते हैं। गाँव में एक बड़ा तालाब है। तालाब के पास एक पुराना मंदिर है। मंदिर में रोज शाम को आरती होती है। गाँव में एक स्कूल भी है। स्कूल में 10 शिक्षक पढ़ाते हैं। बच्चे रोज सुबह 8 बजे स्कूल जाते हैं। दोपहर 2 बजे छुट्टी होती है। गाँव के लोग खेती करते हैं। वे गेहूं, चावल और दालें उगाते हैं। कुछ लोग सब्जियाँ भी उगाते हैं। बाजार हर सोमवार को लगता है। लोग अपनी फसल बेचने आते हैं। गाँव में बिजली और पानी की व्यवस्था अच्छी है। सड़कें पक्की हैं। गाँव में एक छोटा अस्पताल है।'},
+  {id:'h10',title:"10.रविवार का दिन",lang:"hindi",diff:"medium",text:'रविवार छुट्टी का दिन होता है। मैं इस दिन का बेसब्री से इंतजार करता हूँ। रविवार को मैं देर से उठता हूँ। सुबह 9 बजे तक सोता रहता हूँ। उठकर ब्रश करता हूँ। फिर नहाता हूँ। माँ नाश्ता बनाती है। हम सब साथ में नाश्ता करते हैं। नाश्ते में परांठे होते हैं। दही और अचार के साथ खाते हैं। बहुत स्वादिष्ट होता है। नाश्ते के बाद मैं अपना होमवर्क करता हूँ। 2 घंटे पढ़ाई करता हूँ। फिर थोड़ा आराम करता हूँ। दोपहर को पिता जी कहते हैं चलो बाजार चलते हैं। हम सब तैयार होते हैं। बाजार में बहुत भीड़ होती है।'}
+  ]
+};
+
+/* ═══ STATE ═══ */
+const S={lang:null,timerMin:null,passage:null,fontSize:18,words:[],statuses:[],typedWords:[],ci:0,bs:0,wrong:0,typed:0,elapsed:0,total:0,ref:null,active:false,done:false,curSlide:1,optBs:true,optHl:true,speedByTime:true,compVisible:true,paused:false};
+
+/* ═══ FLOATING KEYS ═══ */
+(function(){
+  const keys=['A','S','D','F','G','H','J','K','L','Q','W','E','R','T','Y','U','I','O','P','Z','X','C','V','B','N','M','↵','⌫','⇧','Ctrl','Alt','Space','Tab'];
+  const c=document.getElementById('floaters');
+  let spawnCount=0;
+  function spawn(){
+    if(document.getElementById('landing').style.display==='none')return;
+    if(spawnCount>22){const old=c.querySelector('.fkey');if(old)old.remove();}
+    const k=document.createElement('div');k.className='fkey';
+    k.textContent=keys[Math.floor(Math.random()*keys.length)];
+    const rr=(Math.random()*30-15)+'deg';
+    const dur=7+Math.random()*9;
+    k.style.cssText=`left:${Math.random()*96}%;--rr:${rr};animation-duration:${dur}s;animation-delay:${Math.random()*1.5}s;`;
+    c.appendChild(k);spawnCount++;
+    setTimeout(()=>{k.remove();spawnCount--;},dur*1000+2000);
+  }
+  setInterval(spawn,700);
+})();
+
+/* ═══ SCROLL ANIMATIONS ═══ */
+function initAnim(){
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+  },{threshold:.1});
+  document.querySelectorAll('[data-anim],[data-anim-l]').forEach((el,i)=>{
+    el.style.transitionDelay=(i%6*.1)+'s';
+    el.style.transition='opacity .55s ease,transform .55s ease';
+    obs.observe(el);
+  });
+}
+
+/* ═══ LOGOUT ═══ */
+function logout(){
+  alert("Logged out successfully");
+  window.location.href="/";
+}
+
+/* ═══ THEME ═══ */
+let isDark=false;
+function toggleTheme(){
+  isDark=!isDark;
+  document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
+  document.getElementById('thico').textContent=isDark?'☀️':'🌙';
+  document.getElementById('thlbl').textContent=isDark?'Light':'Dark';
+  document.getElementById('tpill').classList.toggle('on',isDark);
+}
+
+/* ═══ SCREEN ═══ */
+function showScreen(id){
+  ['landing','setup','test','result','history'].forEach(s=>document.getElementById(s).style.display='none');
+  document.getElementById(id).style.display='flex';
+  document.getElementById('topbar').style.display='flex';
+  window.scrollTo(0,0);
+}
+function goLanding(){showScreen('landing');stopTimer();}
+function goSetup(){showScreen('setup');S.curSlide=1;goSlide(1);}
+function startSetup(){goSetup();}
+function showHistory(){showScreen('history');renderHistory();}
+
+/* ═══ SLIDES ═══ */
+function goSlide(n){
+  for(let i=1;i<=5;i++)document.getElementById('sl'+i).classList.remove('active');
+  document.getElementById('sl'+n).classList.add('active');
+  S.curSlide=n;updateStepper(n);if(n===5)fillSummary();
+}
+function updateStepper(a){
+  for(let i=1;i<=5;i++){const d=document.getElementById('sd'+i);d.classList.remove('active','done');if(i<a)d.classList.add('done');else if(i===a)d.classList.add('active');}
+  [['sl12',1],['sl23',2],['sl34',3],['sl45',4]].forEach(([id,n])=>document.getElementById(id).classList.toggle('done',n<a));
+}
+function toggleOpt(k){
+  if(k==='bs'){S.optBs=!S.optBs;document.getElementById('tog-bs').classList.toggle('on',S.optBs);}
+  else{S.optHl=!S.optHl;document.getElementById('tog-hl').classList.toggle('on',S.optHl);}
+}
+
+/* S1 */
+function selLang(lang){
+  S.lang=lang;
+  document.querySelectorAll('.lcard').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('lc-'+(lang==='english'?'en':'hi')).classList.add('sel');
+  document.getElementById('s3t').textContent=lang==='hindi'?'HINDI PASSAGE CHUNEIN':'ENGLISH PASSAGE CHUNEIN';
+  document.getElementById('ltag').textContent=lang==='hindi'?'🇮🇳 Hindi · Mangal Font':'🇬🇧 English';
+  buildPassages();setTimeout(()=>goSlide(2),320);
+}
+/* S2 */
+function selTimer(min,el){
+  S.timerMin=min;
+  document.querySelectorAll('.topt').forEach(t=>t.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('cbox').classList.add('hidden');
+  setTimeout(()=>goSlide(3),320);
+}
+function showCust(el){
+  document.querySelectorAll('.topt').forEach(t=>t.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('cbox').classList.toggle('hidden');
+  S.timerMin=null;
+}
+function confirmCust(){
+  const v=parseInt(document.getElementById('cinp').value);
+  if(!v||v<1||v>120){alert('1–120 minutes daalein.');return;}
+  S.timerMin=v;setTimeout(()=>goSlide(3),200);
+}
+/* S3 */
+function buildPassages(){
+  const ps=PASSAGES[S.lang]||[];
+  document.getElementById('plist').innerHTML=ps.map(p=>`
+    <div class="pcard" id="pc-${p.id}" onclick="selPassage('${p.id}')">
+      <div class="pcard-icon">📝</div>
+      <div class="pbody">
+        <div class="ptitle">${p.title}</div>
+        <div class="pprev ${S.lang==='hindi'?'hin':''}">${p.text}</div>
+        <div class="pmeta"><span>${p.text.split(/\s+/).length} words</span><span class="diff ${p.diff}">${p.diff.charAt(0).toUpperCase()+p.diff.slice(1)}</span></div>
+      </div>
+    </div>`).join('');
+}
+function selPassage(id){
+  S.passage=(PASSAGES[S.lang]||[]).find(p=>p.id===id);
+  document.querySelectorAll('.pcard').forEach(el=>el.classList.remove('sel'));
+  document.getElementById('pc-'+id).classList.add('sel');
+  setTimeout(()=>goSlide(4),320);
+}
+/* S4 */
+function selFS(sz,btn){
+  S.fontSize=sz;
+  document.querySelectorAll('.fsb').forEach(b=>{b.classList.remove('sel');b.textContent=b.textContent.replace(' ✓','');});
+  btn.classList.add('sel');btn.textContent+=' ✓';
+  const fp=document.getElementById('fprev');fp.style.fontSize=sz+'px';fp.className='fprev'+(S.lang==='hindi'?' hin':'');
+}
+/* S5 */
+function fillSummary(){
+  document.getElementById('svl').textContent=S.lang==='hindi'?'🇮🇳 Hindi':'🇬🇧 English';
+  document.getElementById('svt').textContent=S.timerMin?S.timerMin+' min':'—';
+  document.getElementById('svp2').textContent=S.passage?S.passage.title:'—';
+  document.getElementById('svf').textContent=S.fontSize+'px';
+}
+
+/* ═══ TIMER FUNCTIONS — FIXED ═══ */
+function stopTimer(){
+  if(S.ref){clearInterval(S.ref);S.ref=null;}
+}
+
+function startTimer(){
+  // ✅ FIX: Pehle purana timer band karo, phir naya shuru karo
+  stopTimer();
+  S.ref=setInterval(()=>{
+    if(S.done){stopTimer();return;}
+    if(S.paused)return; // pause ke time kuch mat karo
+    S.elapsed++;
+    updateTD();
+    updateLive();
+    const rem=Math.max(0,S.total-S.elapsed);
+    const el=document.getElementById('ttime');
+    if(rem<=5)el.className='ttime danger';
+    else if(rem<=10)el.className='ttime warn';
+    else el.className='ttime';
+    if(S.elapsed>=S.total)endTest();
+  },1000);
+}
+
+/* ✅ FIX: toggleTimer — Pause/Resume sahi se kaam karta hai */
+function toggleTimer(){
+  const btn=document.getElementById('pauseBtn');
+  if(!S.active||S.done)return;
+  S.paused=!S.paused;
+  if(S.paused){
+    btn.textContent='▶ Resume';
+    btn.style.borderColor='var(--ok)';
+    btn.style.color='var(--ok)';
+  } else {
+    btn.textContent='⏸ Pause';
+    btn.style.borderColor='var(--warn)';
+    btn.style.color='var(--warn)';
+  }
+}
+
+function updateTD(){
+  const r=Math.max(0,S.total-S.elapsed);
+  document.getElementById('ttime').textContent=String(Math.floor(r/60)).padStart(2,'0')+':'+String(r%60).padStart(2,'0');
+}
+
+/* ═══ START TEST — FIXED ═══ */
+function initTestScreen(){
+  const isHi=S.lang==='hindi';
+  const ff=isHi?"'Noto Sans Devanagari',sans-serif":"'Poppins',sans-serif";
+  const pc=document.getElementById('pcontent'),tp=document.getElementById('ty-para');
+  pc.className='pcontent'+(isHi?' hin':'');pc.style.fontSize=S.fontSize+'px';pc.style.fontFamily=ff;
+  tp.className='ty-para'+(isHi?' hin':'');tp.style.fontSize=S.fontSize+'px';tp.style.fontFamily=ff;
+  document.getElementById('ttime').className='ttime';
+  // ✅ FIX: Pause button reset karo
+  const pauseBtn=document.getElementById('pauseBtn');
+  pauseBtn.textContent='⏸ Pause';
+  pauseBtn.style.borderColor='var(--warn)';
+  pauseBtn.style.color='var(--warn)';
+  renderPassage();renderTyping('');updateTD();resetLive();
+  document.getElementById('progf').style.width='0%';
+}
+
+function startTest(){
+  if(!S.lang||!S.timerMin||!S.passage){alert('Sabhi steps complete karein!');return;}
+  S.words=S.passage.text.split(/\s+/).filter(w=>w.length>0);
+  S.statuses=new Array(S.words.length).fill('pending');
+  S.typedWords=new Array(S.words.length).fill('');
+  S.ci=0;S.bs=0;S.wrong=0;S.typed=0;S.elapsed=0;
+  S.total=S.timerMin*60;
+  S.active=false;S.done=false;S.paused=false;
+  // ✅ FIX: Timer pehle band karo
+  stopTimer();
+  showScreen('test');
+  document.getElementById('topbar').style.display='none';
+  initTestScreen();
+  try{document.documentElement.requestFullscreen().catch(()=>{});}catch(e){}
+  const inp=document.getElementById('rinp');inp.value='';
+  inp.removeEventListener('keydown',onKD);
+  inp.removeEventListener('input',onIN);
+  inp.addEventListener('keydown',onKD);
+  inp.addEventListener('input',onIN);
+  inp.focus();
+}
+
+function focusInp(){document.getElementById('rinp').focus();}
+
+function quitTest(){
+  if(!confirm('Test quit karna chahte hain?'))return;
+  S.done=true;S.paused=false;
+  stopTimer();
+  const inp=document.getElementById('rinp');
+  inp.removeEventListener('keydown',onKD);
+  inp.removeEventListener('input',onIN);
+  try{if(document.fullscreenElement)document.exitFullscreen();}catch(e){}
+  document.getElementById('topbar').style.display='flex';
+  goSetup();
+}
+
+/* ═══ KEYBOARD ═══ */
+function onKD(e){
+  if(S.done)return;
+  if(S.paused)return; // ✅ FIX: Pause pe typing band
+  if(!S.active){S.active=true;startTimer();}
+  if(e.key==='Backspace'){
+    if(!S.optBs){e.preventDefault();return;}
+    S.bs++;
+  }
+  if(e.key===' '||e.code==='Space'){
+    e.preventDefault();
+    const v=document.getElementById('rinp').value.trim();
+    if(v.length>0){submitWord(v);document.getElementById('rinp').value='';}
+  }
+}
+function onIN(){
+  if(S.done)return;
+  if(S.paused)return;
+  renderTyping(document.getElementById('rinp').value);
+}
+
+/* ═══ WORD LOGIC ═══ */
+function editDist(a,b){
+  const m=a.length,n=b.length;
+  const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i===0?j:j===0?i:0));
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+function classifyWord(t,e){
+  if(t===e)return'ok';
+  return editDist(t,e)<=2?'half':'err';
+}
+function submitWord(typed){
+  if(S.ci>=S.words.length)return;
+  const cls=classifyWord(typed,S.words[S.ci]);
+  S.statuses[S.ci]=cls;S.typedWords[S.ci]=typed;
+  if(cls!=='ok')S.wrong++;S.typed++;S.ci++;
+  renderPassage();renderTyping('');updateLive();scrollCur();
+  if(S.ci>=S.words.length)endTest();
+}
+function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function renderPassage(){
+  const hlOff=!S.optHl;
+  document.getElementById('pcontent').innerHTML=S.words.map((w,i)=>{
+    let c='w ';
+    if(i<S.ci){c+=hlOff?'pending':(S.statuses[i]==='ok'?'ok':'err');}
+    else if(i===S.ci){c+=hlOff?'pending':'cur';}
+    else{c+='pending';}
+    return`<span class="${c}" id="w${i}">${esc(w)}</span>`;
+  }).join(' ');
+  document.getElementById('progf').style.width=S.words.length>0?(S.ci/S.words.length*100)+'%':'0%';
+}
+
+function renderTyping(cur){
+  let html='';
+  for(let i=0;i<S.ci;i++)html+=`<span class="ty-word ${S.statuses[i]==='ok'?'ok':'err'}">${esc(S.typedWords[i])}</span> `;
+  html+=`<span class="ty-current">${esc(cur)}</span><span class="ty-cursor"></span>`;
+  const tp=document.getElementById('ty-para');tp.innerHTML=html;tp.scrollTop=tp.scrollHeight;
+}
+function scrollCur(){const el=document.getElementById('w'+S.ci);if(el)el.scrollIntoView({behavior:'smooth',block:'center'});}
+function resetLive(){
+  ['lv-wpm','lv-w','lv-e'].forEach(id=>document.getElementById(id).textContent='0');
+  document.getElementById('lv-acc').textContent='100%';
+}
+function updateLive(){
+  const m=Math.max(0.01,S.elapsed/60),ok=S.statuses.filter(s=>s==='ok').length;
+  document.getElementById('lv-wpm').textContent=Math.round(ok/m);
+  document.getElementById('lv-acc').textContent=(S.typed>0?Math.round(ok/S.typed*100):100)+'%';
+  document.getElementById('lv-w').textContent=S.typed;
+  document.getElementById('lv-e').textContent=S.wrong;
+}
+
+/* ═══ END ═══ */
+function endTest(){
+  if(S.done)return;S.done=true;S.paused=false;
+  stopTimer();
+  const inp=document.getElementById('rinp');
+  inp.removeEventListener('keydown',onKD);
+  inp.removeEventListener('input',onIN);
+  try{if(document.fullscreenElement)document.exitFullscreen();}catch(e){}
+  setTimeout(showResult,600);
+}
+
+/* ═══ RESULT ═══ */
+function toggleSpeedBase(){
+  S.speedByTime=!S.speedByTime;
+  document.getElementById('rtog').classList.toggle('on',S.speedByTime);
+  showResult();
+}
+function toggleComparison(){
+  S.compVisible=!S.compVisible;
+  document.getElementById('comp-tog').classList.toggle('on',S.compVisible);
+  document.getElementById('comp-wrap').style.display=S.compVisible?'block':'none';
+}
+
+function showResult(){
+  showScreen('result');
+  const tb=S.speedByTime?Math.max(0.01,S.elapsed/60):S.timerMin;
+  const ok=S.statuses.filter(s=>s==='ok').length;
+  const half=S.statuses.filter(s=>s==='half').length;
+  const full=S.statuses.filter(s=>s==='err').length;
+  const nww=full+(half*.5),cw=ok+(half*.5);
+  const om=Math.max(0,S.words.length-S.typed);
+  const gs=S.typed>0?+(S.typed/tb).toFixed(2):0;
+  const ns=+(cw/tb).toFixed(2);
+  const acc=S.words.length>0?((cw/S.words.length)*100).toFixed(2):'0.00';
+  const thr=S.lang==='english'?30:25,qual=ns>=thr;
+  const em=S.elapsed,ts=String(Math.floor(em/60)).padStart(2,'0')+':'+String(em%60).padStart(2,'0');
+
+  document.getElementById('ri-twg').textContent=S.words.length;
+  document.getElementById('ri-date').textContent=new Date().toLocaleDateString('en-IN');
+  document.getElementById('ri-ptitle').textContent=S.passage.title;
+  document.getElementById('ri-dur').textContent=S.timerMin+':00 min.';
+  document.getElementById('ri-taken').textContent=ts+' min.';
+
+  document.getElementById('rs-twt').textContent=S.typed;
+  document.getElementById('rs-fm').textContent=full;
+  document.getElementById('rs-hm').textContent=half;
+  document.getElementById('rs-nww').textContent=nww.toFixed(1);
+  document.getElementById('rs-om').textContent=om;
+  document.getElementById('rs-bs').textContent=S.bs;
+  document.getElementById('rs-cw').textContent=cw.toFixed(1);
+  document.getElementById('rs-gs').textContent=gs;
+  document.getElementById('rs-ns').textContent=ns;
+  document.getElementById('rs-acc').textContent=acc+'%';
+
+  const st=document.getElementById('rs-status'),tile=document.getElementById('rs-status-tile');
+  st.textContent=qual?'Qualified':'Not Qualified';
+  tile.className='stile '+(qual?'t-ok':'t-err');
+  const mw=Math.round(thr*S.timerMin);
+  document.getElementById('rs-info').textContent=`Minimum ${mw} words required to qualify. Accuracy = (${cw.toFixed(1)} / ${S.words.length}) × 100. Backspace: ${S.bs}. Omissions: ${om}.`;
+
+  renderComparison();
+  saveHistory({date:new Date().toLocaleString('en-IN'),lang:S.lang,netWpm:ns,grossWpm:gs,acc,passage:S.passage.title,duration:S.timerMin,qualified:qual,correct:cw.toFixed(1),wrong:full,half,bs:S.bs,omissions:om,timeTaken:ts});
+}
+
+/* ═══ COMPARISON ═══ */
+function renderComparison(){
+  const isHi=S.lang==='hindi';const ff=isHi?"'Noto Sans Devanagari',sans-serif":"'Poppins',sans-serif";
+  const oe=document.getElementById('comp-orig'),te=document.getElementById('comp-typed');
+  oe.className='comp-pane comp-orig'+(isHi?' hin':'');te.className='comp-pane comp-typed'+(isHi?' hin':'');
+  oe.style.fontFamily=te.style.fontFamily=ff;
+  let oh='';
+  for(let i=0;i<S.words.length;i++){
+    if(i<S.typed){oh+=S.statuses[i]==='ok'?`<span class="cw-ok">${esc(S.words[i])}</span> `:`<span class="cw-err">${esc(S.words[i])}</span> `;}
+    else{oh+=`<span class="cw-miss">${esc(S.words[i])}</span> `;}
+  }
+  oe.innerHTML=oh;
+  let th='';
+  for(let i=0;i<S.typed;i++)th+=S.statuses[i]==='ok'?`<span class="cw-ok">${esc(S.typedWords[i])}</span> `:`<span class="cw-err">${esc(S.typedWords[i])}</span> `;
+  te.innerHTML=th||'<span style="color:var(--muted);font-size:13px">No words typed</span>';
+  document.getElementById('comp-wrap').style.display=S.compVisible?'block':'none';
+  document.getElementById('comp-tog').classList.toggle('on',S.compVisible);
+}
+
+/* ═══ HISTORY ═══ */
+function getHistory(){try{return JSON.parse(localStorage.getItem('tscc_v6')||'[]');}catch(e){return[];}}
+function saveHistory(e){const h=getHistory();h.unshift(e);if(h.length>60)h.length=60;localStorage.setItem('tscc_v6',JSON.stringify(h));}
+function clearHistory(){if(!confirm('Poori history delete karna chahte hain?'))return;localStorage.removeItem('tscc_v6');renderHistory();}
+function renderHistory(){
+  const h=getHistory();const list=document.getElementById('hlist');
+  if(!h.length){list.innerHTML='<div class="hempty"><span style="font-size:36px;display:block;margin-bottom:8px">📊</span>Abhi tak koi test nahi diya.<br>Pehla test do!</div>';return;}
+  list.innerHTML=h.map((e,i)=>`<div class="hitem"><div class="hitem-n">${i+1}</div><div class="hbody"><div class="hrow1"><span class="hwpm">${e.netWpm} WPM</span><span class="hlang">${e.lang==='hindi'?'🇮🇳 Hindi':'🇬🇧 English'}</span><span class="hq ${e.qualified?'yes':'no'}">${e.qualified?'✅ Qualified':'❌ Failed'}</span></div><div class="hrow2"><strong>${e.passage}</strong> · ${e.duration} min · Acc: ${e.acc}% · Err: ${e.wrong} · ${e.date}</div></div></div>`).join('');
+}
+
+/* ═══ RETRY — FIXED ═══ */
+function retryTest(){
+  if(!S.passage||!S.timerMin||!S.lang){alert('Koi test nahi hai retry karne ke liye.');return;}
+  // ✅ FIX: State completely reset karo
+  S.statuses=new Array(S.words.length).fill('pending');
+  S.typedWords=new Array(S.words.length).fill('');
+  S.ci=0;S.bs=0;S.wrong=0;S.typed=0;S.elapsed=0;
+  S.total=S.timerMin*60;
+  S.active=false;S.done=false;S.paused=false;
+  // ✅ FIX: Timer band karo
+  stopTimer();
+  showScreen('test');
+  document.getElementById('topbar').style.display='none';
+  initTestScreen();
+  try{document.documentElement.requestFullscreen().catch(()=>{});}catch(e){}
+  const inp=document.getElementById('rinp');inp.value='';
+  inp.removeEventListener('keydown',onKD);
+  inp.removeEventListener('input',onIN);
+  inp.addEventListener('keydown',onKD);
+  inp.addEventListener('input',onIN);
+  inp.focus();
+}
+
+/* ═══ NEXT EXERCISE — FIXED ═══ */
+function nextExercise(){
+  if(!S.lang||!S.passage){goSetup();goSlide(3);return;}
+  const ps=PASSAGES[S.lang]||[];
+  const curIdx=ps.findIndex(p=>p.id===S.passage.id);
+  const nextIdx=(curIdx+1)%ps.length;
+  const nextPassage=ps[nextIdx];
+  // ✅ FIX: Naya passage set karo aur fresh test shuru karo
+  S.passage=nextPassage;
+  S.words=S.passage.text.split(/\s+/).filter(w=>w.length>0);
+  S.statuses=new Array(S.words.length).fill('pending');
+  S.typedWords=new Array(S.words.length).fill('');
+  S.ci=0;S.bs=0;S.wrong=0;S.typed=0;S.elapsed=0;
+  S.total=S.timerMin*60;
+  S.active=false;S.done=false;S.paused=false;
+  stopTimer();
+  showScreen('test');
+  document.getElementById('topbar').style.display='none';
+  initTestScreen();
+  try{document.documentElement.requestFullscreen().catch(()=>{});}catch(e){}
+  const inp=document.getElementById('rinp');inp.value='';
+  inp.removeEventListener('keydown',onKD);
+  inp.removeEventListener('input',onIN);
+  inp.addEventListener('keydown',onKD);
+  inp.addEventListener('input',onIN);
+  inp.focus();
+}
+
+/* ═══ INIT ═══ */
+window.addEventListener('DOMContentLoaded',()=>{
+  initAnim();
+  document.getElementById('landing').style.display='flex';
+  ['setup','test','result','history'].forEach(id=>document.getElementById(id).style.display='none');
+});
+</script>
+</body>
+</html> 
